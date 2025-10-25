@@ -24,3 +24,42 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@layer components {
+  .container {
+    @apply max-w-6xl mx-auto px-6;
+  }
+
+  .toolbar {
+    @apply bg-white dark:bg-gray-900 shadow-sm;
+  }
+
+  .toolbar-inner {
+    @apply flex items-center justify-between py-3;
+  }
+
+  .brand {
+    @apply font-bold text-lg;
+  }
+
+  .nav {
+    @apply hidden sm:flex gap-3;
+  }
+
+  .nav-link {
+    @apply text-sm hover:underline;
+  }
+
+  .btn {
+    @apply text-sm px-3 py-1 border rounded;
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 text-white;
+  }
+
+  /* small input style used elsewhere */
+  .input {
+    @apply border rounded px-3 py-2;
+  }
+}
