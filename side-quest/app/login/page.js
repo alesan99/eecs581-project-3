@@ -37,6 +37,7 @@ export default function LoginPage() {
     };
   }, [router]);
 
+  // Submit login request
   async function submit(e) {
     e.preventDefault();
     setErr("");
@@ -47,8 +48,11 @@ export default function LoginPage() {
       body: JSON.stringify({ email, password }),
     });
     if (res.ok) {
+      // Proceed to map page
       router.push("/map");
+      router.refresh();
     } else {
+      // Show login error
       const payload = await res.json();
       setErr(payload?.message || "Login failed");
     }

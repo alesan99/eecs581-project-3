@@ -30,6 +30,7 @@ export default function Toolbar() {
           </nav>
         </div>
 
+		{/*Check if user is logged in or not*/}
         <div className="flex items-center gap-3">
           {user ? (
             <>

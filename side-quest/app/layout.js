@@ -10,7 +10,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Toolbar from "./components/toolbar";
-import Footer from "./components/footer";
 
 // Project Description //
 export const metadata = {
@@ -41,7 +40,6 @@ export default function RootLayout({ children }) {
       >
         <Toolbar/>
         {children}
-        <Footer/>
       </body>
     </html>
   );
