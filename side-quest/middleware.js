@@ -12,13 +12,14 @@ import { NextResponse } from "next/server";
 export function middleware(request) {
 	const { pathname } = request.nextUrl;
 
-	// allow public/static and login/api
+	// allow public/static and login/api/signup
 	if (
 		pathname.startsWith("/_next") ||
 		pathname.startsWith("/static") ||
 		pathname === "/favicon.ico" ||
 		pathname.startsWith("/api") ||
-		pathname === "/login"
+		pathname === "/login" ||
+		pathname === "/signup"
 	) {
 		return NextResponse.next();
 	}

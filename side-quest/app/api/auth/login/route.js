@@ -7,24 +7,41 @@
 	Errors: N/A
 */
 
-import { promises as fs } from "fs";
-import path from "path";
+import { createAdminClient } from "../../../../lib/supabase/admin";
+import bcrypt from "bcryptjs";
 import { signPayload } from "../../../../lib/auth";
 
 export async function POST(req) {
 	const body = await req.json();
 	const { email, password } = body;
-	const dbPath = path.join(process.cwd(), "data", "users.json");
-	const raw = await fs.readFile(dbPath, "utf8");
-	const users = JSON.parse(raw);
+	const supabase = createAdminClient();
 
-	const user = users.find(u => u.email === email && u.password === password);
-	if (!user) {
-		return new Response(JSON.stringify({ message: "Invalid credentials" }), { status: 401, headers: { "Content-Type": "application/json" } });
+	// Find user by email
+	const { data: user, error } = await supabase
+		.from("users")
+		.select("*")
+		.eq("email", email)
+		.single();
+
+	if (error || !user) {
+		return new Response(
+			JSON.stringify({ message: "Invalid credentials" }),
+			{ status: 401, headers: { "Content-Type": "application/json" } }
+		);
 	}
 
+	// Verify password
+	const isValid = await bcrypt.compare(password, user.password_hash);
+	if (!isValid) {
+		return new Response(
+			JSON.stringify({ message: "Invalid credentials" }),
+			{ status: 401, headers: { "Content-Type": "application/json" } }
+		);
+	}
+
+	// Create session token
 	const token = signPayload({
-		id: user.id,
+		id: user.user_id,
 		email: user.email,
 		name: user.name,
 		// expire in 30 days
