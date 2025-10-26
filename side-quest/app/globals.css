@@ -58,8 +58,36 @@ body {
     @apply bg-blue-600 text-white;
   }
 
-  /* small input style used elsewhere */
   .input {
     @apply border rounded px-3 py-2;
   }
+
+  .page {
+    @apply max-w-6xl mx-auto p-8;
+  }
+
+  .title {
+    @apply text-2xl font-semibold mb-4;
+  }
+
+  .subtitle {
+    @apply text-lg text-gray-600 mb-2;
+  }
+
+  .text-muted {
+    @apply text-gray-500 dark:text-gray-400;
+  }
+
+  .actions {
+    @apply flex gap-3;
+  }
+
+  .center {
+    @apply flex items-center justify-center;
+  }
+}
+
+/* Make sure global heights are present */
+html, body, #__next {
+  height: 100%;
 }

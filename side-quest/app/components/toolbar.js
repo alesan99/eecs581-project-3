@@ -11,9 +11,9 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { verifyToken } from "../../lib/auth";
 
-export default function Toolbar() {
+export default async function Toolbar() {
   // Check if user is logged in.
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get("sid")?.value;
   const user = token ? verifyToken(token) : null;
 
