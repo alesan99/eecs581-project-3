@@ -9,9 +9,9 @@
 
 export default function LeaderboardsPage() {
 	return (
-		<div className="max-w-6xl mx-auto p-8">
+		<div className="max-w-6xl mx-auto p-8 text-[#FF7A00]">
 			<h2 className="text-2xl font-semibold mb-4">Leaderboards</h2>
-			<p className="text-gray-500">Placeholder.</p>
+			<p>Placeholder.</p>
 		</div>
 	);
 }

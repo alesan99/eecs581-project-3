@@ -29,13 +29,13 @@ export default async function AccountPage() {
 	}
 
 	return (
-		<div className="max-w-4xl mx-auto p-8">
+		<div className="max-w-4xl mx-auto p-8 text-[#FF7A00]">
 			<h2 className="text-2xl font-semibold mb-4">Account</h2>
 			<div>
 				<p><strong>Email:</strong> {user.email}</p>
 				<p><strong>Name:</strong> {user.name || "-"}</p>
 				<form action="/api/auth/logout" method="post" className="mt-4">
-					<button className="px-3 py-1 border rounded">Logout</button>
+					<button className="px-3 py-1 border rounded cursor-pointer hover:bg-[#FF7A00] hover:text-white transition-all duration-200">Logout</button>
 				</form>
 			</div>
 		</div>

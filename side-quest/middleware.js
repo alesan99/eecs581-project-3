@@ -12,14 +12,15 @@ import { NextResponse } from "next/server";
 export function middleware(request) {
 	const { pathname } = request.nextUrl;
 
-	// allow public/static and login/api/signup
+	// allow public/static and login/api/signup/landing page
 	if (
 		pathname.startsWith("/_next") ||
 		pathname.startsWith("/static") ||
 		pathname === "/favicon.ico" ||
 		pathname.startsWith("/api") ||
 		pathname === "/login" ||
-		pathname === "/signup"
+		pathname === "/signup" ||
+		pathname === "/"
 	) {
 		return NextResponse.next();
 	}
