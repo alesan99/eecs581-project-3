@@ -16,7 +16,7 @@ export default async function AccountPage() {
 	requireAuthOrRedirect();
 
 	// read token from cookie and verify
-	const token = cookies().get("sid")?.value;
+	const token = await cookies().get("sid")?.value;
 	const user = token ? verifyToken(token) : null;
 
 	if (!user) {
