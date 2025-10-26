@@ -1,10 +1,10 @@
 /*
-  Name: Map data
-  Description: Defines the node map of the KU campus.
-  Programmers: Alejandro Sandoval
-  Date: 10/25/2025
-  Revisions: N/A
-  Errors: N/A
+	Name: Map data
+	Description: Defines the node map of the KU campus.
+	Programmers: Alejandro Sandoval
+	Date: 10/25/2025
+	Revisions: N/A
+	Errors: N/A
 */
 
 export const mapData = {
