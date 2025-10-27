@@ -16,7 +16,10 @@ export default async function Toolbar() {
 	// Check if user is logged in.
 	const cookieStore = await cookies();
 	const token = cookieStore.get("sid")?.value;
+	
+	// Verify the token to get user info; null if not authenticated
 	const user = token ? verifyToken(token) : null;
 
+	// Render the client toolbar with user info
 	return <ToolbarClient user={user} />;
 }
