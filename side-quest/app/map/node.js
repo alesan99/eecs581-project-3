@@ -43,10 +43,13 @@ export function Node({ node, onPointerDown, onClick }) {
 
 export function NodeDialog({ node, containerRef, pan, toggles = {}, onToggle, onClose }) {
 	if (!node) return null;
+	
+	// Compute dialog position relative to the map container
 	const screenX = node.x + (pan?.x || 0);
 	const screenY = node.y + (pan?.y || 0);
 	const cw = containerRef.current?.clientWidth || 800;
 	const ch = containerRef.current?.clientHeight || 400;
+	// Clamp dialog to container bounds to prevent overflow
 	const dialogLeft = Math.max(12, Math.min(cw - 280, screenX));
 	const dialogTop = Math.max(12, Math.min(ch - 220, screenY));
 
