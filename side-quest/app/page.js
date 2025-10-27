@@ -1,27 +1,37 @@
 /*
 	Name: page.js
-	Description: Main landing page.
+	Description: Main landing page of Side Quest with hero section, stats, and CTA.
 	Programmers: Aidan Barnard, Alejandro Sandoval
 	Date: 10/25/2025
 	Revisions: N/A
 	Errors: N/A
 */
+
 "use client";
+
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Map, Compass, Backpack, Star, Sparkles, Trophy, Users } from "lucide-react";
 
+/*
+	Component: Home
+	Description:
+		Main landing page component for Side Quest.
+		Includes animated background elements, hero header, fun stats cards, and CTA button.
+*/
 export default function Home() {
 	const [mounted, setMounted] = useState(false);
-	
+
+	// Trigger animations once the component mounts
 	useEffect(() => {
 		setMounted(true);
 	}, []);
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-[#FFF6D8] via-yellow-50 to-orange-50 flex items-center justify-center p-8 overflow-hidden relative">
-			{/* Floating background elements */}
+			
+			{/* Floating background elements for visual depth */}
 			<div className="absolute inset-0 overflow-hidden pointer-events-none">
 				<div className={`absolute top-20 left-10 w-20 h-20 bg-[#00AEEF] opacity-20 rounded-full blur-xl transition-opacity duration-1000 ${mounted ? 'opacity-20' : 'opacity-0'}`}></div>
 				<div className={`absolute top-40 right-20 w-32 h-32 bg-[#FF7A00] opacity-20 rounded-full blur-xl transition-opacity duration-1000 delay-300 ${mounted ? 'opacity-20' : 'opacity-0'}`}></div>
@@ -29,7 +39,8 @@ export default function Home() {
 			</div>
 
 			<div className="max-w-5xl w-full text-center relative z-10">
-				{/* Animated Icons Header */}
+				
+				{/* Animated icon header */}
 				<div className={`flex gap-8 justify-center mb-8 transition-opacity duration-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
 					<Map className="w-12 h-12 text-[#00AEEF]" />
 					<Compass className="w-12 h-12 text-[#FF7A00]" />
@@ -43,22 +54,28 @@ export default function Home() {
 					Side Quest
 				</h1>
 
+				{/* Hero subtitle */}
 				<p className={`text-xl text-[#00AEEF] mb-12 max-w-3xl mx-auto transition-opacity duration-700 delay-300 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
 					Explore KU campus, complete epic challenges, earn achievements, and dominate the leaderboard.
 				</p>
 
-				{/* Fun Stats/Random Facts */}
+				{/* Fun Stats / Random Facts Section */}
 				<div className={`grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-3xl mx-auto transition-opacity duration-700 delay-400 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+					{/* Card 1 */}
 					<div className="bg-white rounded-2xl p-6 border-4 border-[#00AEEF] shadow-[6px_6px_0_#FF7A00] hover:shadow-[8px_8px_0_#FF7A00] transform hover:scale-105 transition-all">
 						<Users className="w-10 h-10 text-[#00AEEF] mx-auto mb-2" />
 						<p className="text-2xl font-bold text-[#FF7A00]">Join the Squad</p>
 						<p className="text-sm text-gray-600">Compete with friends</p>
 					</div>
+
+					{/* Card 2 */}
 					<div className="bg-white rounded-2xl p-6 border-4 border-[#FF7A00] shadow-[6px_6px_0_#00AEEF] hover:shadow-[8px_8px_0_#00AEEF] transform hover:scale-105 transition-all">
 						<Trophy className="w-10 h-10 text-[#FF7A00] mx-auto mb-2" />
 						<p className="text-2xl font-bold text-[#00AEEF]">Earn Bragging Rights</p>
 						<p className="text-sm text-gray-600">Placeholder</p>
 					</div>
+
+					{/* Card 3 */}
 					<div className="bg-white rounded-2xl p-6 border-4 border-[#FFDA00] shadow-[6px_6px_0_#FF7A00] hover:shadow-[8px_8px_0_#FF7A00] transform hover:scale-105 transition-all">
 						<Sparkles className="w-10 h-10 text-[#FF7A00] mx-auto mb-2" />
 						<p className="text-2xl font-bold text-[#00AEEF]">Epic Quests</p>
@@ -66,7 +83,7 @@ export default function Home() {
 					</div>
 				</div>
 				
-				{/* CTA Buttons */}
+				{/* CTA Button */}
 				<div className={`flex gap-6 justify-center flex-wrap transition-opacity duration-700 delay-500 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
 					<Link 
 						href="/map" 
