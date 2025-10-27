@@ -24,16 +24,20 @@ export function middleware(request) {
 	) {
 		return NextResponse.next();
 	}
-
+	// Retrieve session token from cookies
 	const token = request.cookies.get("sid")?.value;
+
+	// Redirect to login if no token found
 	if (!token) {
 		const url = new URL("/login", request.url);
 		return NextResponse.redirect(url);
 	}
-
+	
+	// Allow request to continue if token exists
 	return NextResponse.next();
 }
 
+// Middleware applies to all routes except API, static files, _next, and favicon
 export const config = {
 	matcher: ["/((?!api|_next|static|favicon.ico).*)"],
 };
