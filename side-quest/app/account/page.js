@@ -19,6 +19,8 @@ export default async function AccountPage() {
 	const token = await cookies().get("sid")?.value;
 	const user = token ? verifyToken(token) : null;
 
+	// If the user isn't logged in or the token fails verification,
+	// show a simple message prompting them to log in
 	if (!user) {
 		return (
 			<div className="max-w-4xl mx-auto p-8">
@@ -28,6 +30,8 @@ export default async function AccountPage() {
 		);
 	}
 
+	// If the user is authenticated, display their account info
+	// along with a logout option
 	return (
 		<div className="max-w-4xl mx-auto p-8 text-[#FF7A00]">
 			<h2 className="text-2xl font-semibold mb-4">Account</h2>
