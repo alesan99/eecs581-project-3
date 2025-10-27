@@ -14,11 +14,18 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Map, Compass, Backpack, UserPlus } from "lucide-react";
 
+/*
+	Component: SignupPage
+	Description:
+		Handles client-side rendering of the signup form.
+		Checks if a user is already logged in and redirects to homepage.
+		Submits signup data to API and handles errors.
+*/
 export default function SignupPage() {
-	const [name, setName] = useState("");
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	const [err, setErr] = useState("");
+	const [name, setName] = useState("");  // name input state
+	const [email, setEmail] = useState("");  // email input state
+	const [password, setPassword] = useState("");  // password input state
+	const [err, setErr] = useState("");  // error message state
 	const router = useRouter();
 
 	// Redirect to homepage if already logged in
@@ -30,7 +37,7 @@ export default function SignupPage() {
 				if (!mounted) return;
 				if (res.ok) {
 					const { user } = await res.json();
-					if (user) router.replace("/");
+					if (user) router.replace("/");  // redirect if user exists
 				}
 			} catch (e) {
 				// ignore network errors
@@ -44,7 +51,7 @@ export default function SignupPage() {
 	// Submit signup request
 	async function submit(e) {
 		e.preventDefault();
-		setErr("");
+		setErr("");  // reset error
 		const res = await fetch("/api/auth/signup", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
