@@ -12,8 +12,10 @@ import bcrypt from "bcryptjs";
 import { signPayload } from "../../../../lib/auth";
 
 export async function POST(req) {
+	// Parse request body to extract user-provided data
 	const body = await req.json();
 	const { name, email, password } = body;
+	// Initialize Supabase admin client for database operations
 	const supabase = createAdminClient();
 
 	// Validate input
@@ -31,6 +33,7 @@ export async function POST(req) {
 		.eq("email", email)
 		.single();
 
+	// Return conflict error if email is already registered
 	if (existingUser) {
 		return new Response(
 			JSON.stringify({ message: "User with this email already exists" }),
@@ -53,7 +56,7 @@ export async function POST(req) {
 		])
 		.select()
 		.single();
-
+	// Handle unexpected insert errors
 	if (error) {
 		return new Response(
 			JSON.stringify({ message: "Failed to create account" }),
@@ -70,7 +73,9 @@ export async function POST(req) {
 		exp: Date.now() + 1000 * 60 * 60 * 24 * 30
 	});
 
+	// Store the session token 
 	const cookie = `sid=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`;
+	// Return a success response and set the session cookie
 	return new Response(JSON.stringify({ ok: true }), {
 		status: 200,
 		headers: { "Set-Cookie": cookie, "Content-Type": "application/json" },
