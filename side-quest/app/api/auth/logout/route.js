@@ -8,12 +8,15 @@
 */
 
 export async function POST() {
+	// Overwrite the session cookie (sid) with an expired one to clear authentication
 	const expire = `sid=deleted; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`;
+	
+	// Return redirect response to login page after clearing session
 	return new Response(null, {
 		status: 303,
 		headers: {
-			"Set-Cookie": expire,
-			"Location": "/login",
+			"Set-Cookie": expire,  // expire session token
+			"Location": "/login",  // send user back to login page
 		},
 	});
 }
