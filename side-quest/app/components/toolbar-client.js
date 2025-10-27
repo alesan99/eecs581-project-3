@@ -3,6 +3,17 @@
 import Link from "next/link";
 import { Map, Compass, Trophy, User, LogOut } from "lucide-react";
 
+/*
+	Component: ToolbarClient
+	Description:
+		Responsive navigation bar that adapts based on authentication state.
+		Displays app branding, links to Map, Quests, Leaderboard, and Account pages.
+		Shows login button if no user, or user info + logout button if authenticated.
+	Props:
+		user - Object representing the current user (name, email)
+	Returns:
+		JSX element for toolbar
+*/
 export default function ToolbarClient({ user }) {
 	return (
 		<nav className="flex items-center justify-between bg-gradient-to-r from-[#00AEEF] to-[#0096D6] text-white px-8 py-4 shadow-lg">
@@ -71,6 +82,7 @@ export default function ToolbarClient({ user }) {
 						</form>
 					</>
 				) : (
+					// Login button for unauthorized users
 					<Link 
 						href="/login" 
 						className="bg-[#FF7A00] hover:bg-[#FF9500] text-white font-semibold px-5 py-2 rounded-lg transition-all duration-200 hover:scale-105"
