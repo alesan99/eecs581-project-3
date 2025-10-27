@@ -7,10 +7,12 @@
 	Errors: N/A
 */
 
+// Primary map configuration object
 export const mapData = {
+	// Canvas dimensions for the rendered map (virtual coordinates)
 	width: 2000,
 	height: 3000,
-
+	// Node definitions: each represents a campus landmark or quest point
 	nodes: [
 		{
 			id: "a",
