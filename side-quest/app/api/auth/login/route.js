@@ -12,6 +12,7 @@ import bcrypt from "bcryptjs";
 import { signPayload } from "../../../../lib/auth";
 
 export async function POST(req) {
+	// Parse the incoming request body (expected JSON: { email, password })
 	const body = await req.json();
 	const { email, password } = body;
 	const supabase = createAdminClient();
@@ -22,7 +23,8 @@ export async function POST(req) {
 		.select("*")
 		.eq("email", email)
 		.single();
-
+	
+	// If no user exists or Supabase returns an error, reject login
 	if (error || !user) {
 		return new Response(
 			JSON.stringify({ message: "Invalid credentials" }),
@@ -47,8 +49,9 @@ export async function POST(req) {
 		// expire in 30 days
 		exp: Date.now() + 1000 * 60 * 60 * 24 * 30
 	});
-
+	// Set cookie for the session token
 	const cookie = `sid=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`;
+	// Return success response and attach the cookie in headers
 	return new Response(JSON.stringify({ ok: true }), {
 		status: 200,
 		headers: { "Set-Cookie": cookie, "Content-Type": "application/json" },
