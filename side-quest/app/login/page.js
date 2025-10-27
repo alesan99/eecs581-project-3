@@ -15,6 +15,7 @@ import { motion } from "framer-motion";
 import { Map, Compass, Backpack } from "lucide-react";
 
 export default function LoginPage() {
+	// Local state for form fields and error handling
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [err, setErr] = useState("");
@@ -44,6 +45,7 @@ export default function LoginPage() {
 	async function submit(e) {
 		e.preventDefault();
 		setErr("");
+		// Send credentials to backend login route
 		const res = await fetch("/api/auth/login", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -62,6 +64,7 @@ export default function LoginPage() {
 	}
 
 	return (
+		// Full-screen layout with visual split for branding + login card
 		<div className="min-h-[calc(100vh-80px)] flex items-center justify-center bg-[#FFF6D8] py-10">
 			<div className="flex w-full max-w-5xl items-center justify-between p-10">
 				{/* Left: Illustration Section */}
