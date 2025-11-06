@@ -291,14 +291,23 @@ function MapCanvas() {
 				</svg>
 
 				{/* Render map nodes */}
-				{nodes.map(n => (
-					<Node
-						key={n.id}
-						node={n}
-						onPointerDown={onNodePointerDown}
-						onClick={() => onNodeClick(n.id)}
-					/>
-				))}
+				{nodes.map(n => {
+					// Calculate progress for this node
+					const nodeProgress = nodeToggles[n.id] || {};
+					const completedCount = Object.values(nodeProgress).filter(v => v === true).length;
+					const totalCount = n.quests.length;
+					
+					return (
+						<Node
+							key={n.id}
+							node={n}
+							onPointerDown={onNodePointerDown}
+							onClick={() => onNodeClick(n.id)}
+							completedCount={completedCount}
+							totalCount={totalCount}
+						/>
+					);
+				})}
 			</div>
 
 			{/* Display dialog for selected node */}
