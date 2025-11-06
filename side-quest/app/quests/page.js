@@ -268,8 +268,8 @@ export default async function QuestsPage() {
 						<h3 className="text-3xl font-bold text-[#FF7A00] mb-3 drop-shadow-[2px_2px_#FFDA00]">
 							Continue Your Epic Journey!
 						</h3>
-						<p className="text-xl text-[#00AEEF] mb-6 font-semibold">
-							You&apos;ve completed <span className="text-[#FF7A00] font-bold">{totalCompleted}</span> of <span className="text-[#FF7A00] font-bold">{totalQuests}</span> quests. Keep exploring to complete them all! 🎉
+						<p className="text-xl text-[#00AEEF] mb-6 font-semibold flex items-center justify-center gap-2">
+							You&apos;ve completed <span className="text-[#FF7A00] font-bold">{totalCompleted}</span> of <span className="text-[#FF7A00] font-bold">{totalQuests}</span> quests. Keep exploring to complete them all! <Sparkles className="w-6 h-6 text-[#FF7A00]" />
 						</p>
 						<Link 
 							href="/map" 
@@ -290,14 +290,14 @@ export default async function QuestsPage() {
 							<Star className="w-14 h-14 text-white animate-spin" />
 							<Sparkles className="w-16 h-16 text-white" />
 						</div>
-						<h3 className="text-4xl font-bold text-white mb-3 drop-shadow-[3px_3px_#00AEEF]">
-							🎉 QUEST MASTER! 🎉
+						<h3 className="text-4xl font-bold text-white mb-3 drop-shadow-[3px_3px_#00AEEF] flex items-center justify-center gap-3">
+							<Sparkles className="w-10 h-10" /> QUEST MASTER! <Sparkles className="w-10 h-10" />
 						</h3>
 						<p className="text-2xl text-white font-bold mb-2">
 							You&apos;ve completed ALL {totalQuests} quests!
 						</p>
-						<p className="text-xl text-white opacity-90">
-							You&apos;re a true campus explorer! 🏆
+						<p className="text-xl text-white opacity-90 flex items-center justify-center gap-2">
+							You&apos;re a true campus explorer! <Trophy className="w-6 h-6" />
 						</p>
 					</div>
 				)}

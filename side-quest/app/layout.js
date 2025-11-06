@@ -10,6 +10,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Toolbar from "./components/toolbar";
+import { NotificationProvider } from "./contexts/NotificationContext";
 
 // Project Description //
 export const metadata = {
@@ -38,10 +39,12 @@ export default function RootLayout({ children }) {
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
 			>
-				<Toolbar/>
-				<main className="flex-1 flex flex-col">
-					{children}
-				</main>
+				<NotificationProvider>
+					<Toolbar/>
+					<main className="flex-1 flex flex-col">
+						{children}
+					</main>
+				</NotificationProvider>
 			</body>
 		</html>
 	);

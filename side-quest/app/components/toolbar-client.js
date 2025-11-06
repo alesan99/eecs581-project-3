@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Map, Compass, Trophy, User, LogOut } from "lucide-react";
+import NotificationButton from "./NotificationButton";
 
 /*
 	Component: ToolbarClient
@@ -65,6 +66,7 @@ export default function ToolbarClient({ user }) {
 
 			{/* Auth Section */}
 			<div className="flex items-center gap-3">
+				{user && <NotificationButton />}
 				{user ? (
 					<>
 						<div className="hidden sm:flex items-center gap-2 text-sm bg-white/10 px-3 py-2 rounded-lg backdrop-blur-sm">

@@ -13,6 +13,7 @@ import Image from "next/image";
 import { useRef, useState, useEffect } from "react";
 import { mapData } from "./mapData";
 import { Node, NodeDialog } from "./node";
+import { useNotifications } from "../contexts/NotificationContext";
 
 /*
 	Component: MapPage
@@ -39,6 +40,7 @@ export default function MapPage() {
 */
 function MapCanvas() {
 	const containerRef = useRef(null);
+	const { addNotification } = useNotifications();
 
 	// Static map data
 	const [nodes] = useState(mapData.nodes);
@@ -208,6 +210,36 @@ function MapCanvas() {
 				}
 				throw new Error("Failed to save progress");
 			}
+
+			// Show notification based on action
+			if (newState) {
+				addNotification({
+					type: "success",
+					message: `Quest completed: "${option}" at ${node.label}`,
+				});
+
+				// Check if all quests at this location are now completed
+				const updatedToggles = {
+					...nodeToggles,
+					[nodeId]: { ...nodeToggles[nodeId], [option]: newState },
+				};
+				const completedQuests = Object.values(updatedToggles[nodeId] || {}).filter(v => v === true).length;
+				const totalQuests = node.quests.length;
+				
+				if (completedQuests === totalQuests) {
+					setTimeout(() => {
+						addNotification({
+							type: "success",
+							message: `All quests completed at ${node.label}!`,
+						});
+					}, 500);
+				}
+			} else {
+				addNotification({
+					type: "info",
+					message: `Quest unchecked: "${option}" at ${node.label}`,
+				});
+			}
 		} catch (error) {
 			console.error("Error saving progress:", error);
 			// Revert optimistic update on error
@@ -215,6 +247,11 @@ function MapCanvas() {
 				...prev,
 				[nodeId]: { ...prev[nodeId], [option]: currentState },
 			}));
+			
+			addNotification({
+				type: "error",
+				message: "Failed to save progress. Please try again.",
+			});
 		}
 	}
 
