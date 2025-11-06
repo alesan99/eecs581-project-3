@@ -53,6 +53,9 @@ function MapCanvas() {
 		)
 	);
 
+	// Loading state for progress
+	const [loadingProgress, setLoadingProgress] = useState(true);
+
 	// Panning state
 	const [pan, setPan] = useState({ x: 0, y: 0 });
 	const [isPanning, setIsPanning] = useState(false);
@@ -71,6 +74,50 @@ function MapCanvas() {
 			});
 		}
 	}, [nodes]);
+
+	// Load progress from database on mount
+	useEffect(() => {
+		async function loadProgress() {
+			try {
+				const response = await fetch("/api/progress");
+				if (!response.ok) {
+					// If unauthorized, user is not logged in - that's okay, just use default state
+					if (response.status === 401) {
+						setLoadingProgress(false);
+						return;
+					}
+					throw new Error("Failed to load progress");
+				}
+				const data = await response.json();
+				const progress = data.progress || {};
+
+				// Map database progress to node toggles
+				const newToggles = Object.fromEntries(
+					nodes.map(n => [
+						n.id,
+						Object.fromEntries(
+							n.quests.map(questText => {
+								const locationName = n.label;
+								const locationProgress = progress[locationName] || {};
+								const questProgress = locationProgress[questText];
+								return [questText, questProgress?.completed || false];
+							})
+						)
+					])
+				);
+
+				setNodeToggles(newToggles);
+			} catch (error) {
+				console.error("Error loading progress:", error);
+				// Continue with default state if loading fails
+			} finally {
+				setLoadingProgress(false);
+			}
+		}
+
+		loadProgress();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []); // Only run on mount
 
 	/* ====== Pointer Event Handlers (for map dragging/panning) ====== */
 
@@ -124,12 +171,51 @@ function MapCanvas() {
 		setSelectedId(id);
 	}
 
-	function toggleOption(nodeId, option) {
-		// Toggle quest completion for a given node/quest
+	async function toggleOption(nodeId, option) {
+		// Find the node to get location name
+		const node = nodes.find(n => n.id === nodeId);
+		if (!node) return;
+
+		// Get current completion state
+		const currentState = nodeToggles[nodeId]?.[option] || false;
+		const newState = !currentState;
+
+		// Optimistically update UI
 		setNodeToggles(prev => ({
 			...prev,
-			[nodeId]: { ...prev[nodeId], [option]: !prev[nodeId][option] },
+			[nodeId]: { ...prev[nodeId], [option]: newState },
 		}));
+
+		// Save to database
+		try {
+			const response = await fetch("/api/progress", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					location_name: node.label,
+					quest_text: option,
+					completed: newState,
+				}),
+			});
+
+			if (!response.ok) {
+				// If save fails, revert the optimistic update
+				if (response.status === 401) {
+					console.warn("User not logged in, progress not saved");
+					return;
+				}
+				throw new Error("Failed to save progress");
+			}
+		} catch (error) {
+			console.error("Error saving progress:", error);
+			// Revert optimistic update on error
+			setNodeToggles(prev => ({
+				...prev,
+				[nodeId]: { ...prev[nodeId], [option]: currentState },
+			}));
+		}
 	}
 
 	function closeDialog() {
