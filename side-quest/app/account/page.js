@@ -1,15 +1,17 @@
 /*
 	Name: account/page.js
-	Description: Account configuration page.
-	Programmers: Alejandro Sandoval
+	Description: Account configuration page with completed quests dashboard.
+	Programmers: Alejandro Sandoval, Pashia Vang
 	Date: 10/25/2025
-	Revisions: N/A
+	Revisions: Added completed quests display - 10/26/2025
 	Errors: N/A
 */
 
 import { requireAuthOrRedirect } from "@/lib/requireAuth";
 import { cookies } from "next/headers";
 import { verifyToken } from "../../lib/auth";
+import { createAdminClient } from "../../lib/supabase/admin";
+import { CheckCircle2, MapPin, Trophy } from "lucide-react";
 
 export default async function AccountPage() {
 	// redirect if not authenticated
@@ -30,17 +32,150 @@ export default async function AccountPage() {
 		);
 	}
 
+	const supabase = createAdminClient();
+
+	// Get all quests to calculate total
+	const { data: allQuests } = await supabase
+		.from("quests")
+		.select("quest_id, text, location_id, locations(name)");
+
+	// Get user's completed progress
+	const { data: progress } = await supabase
+		.from("progress")
+		.select(`
+			quest_id,
+			completed,
+			completed_at,
+			quests (
+				quest_id,
+				text,
+				location_id,
+				locations (
+					location_id,
+					name
+				)
+			)
+		`)
+		.eq("user_id", user.id)
+		.eq("completed", true);
+
+	// Organize completed quests by location
+	const completedByLocation = {};
+	let totalCompleted = 0;
+
+	progress?.forEach(p => {
+		const quest = Array.isArray(p.quests) ? p.quests[0] : p.quests;
+		if (!quest) return;
+		
+		const location = Array.isArray(quest.locations) ? quest.locations[0] : quest.locations;
+		if (!location) return;
+
+		const locationName = location.name;
+		if (!completedByLocation[locationName]) {
+			completedByLocation[locationName] = [];
+		}
+		
+		completedByLocation[locationName].push({
+			text: quest.text,
+			completed_at: p.completed_at
+		});
+		totalCompleted++;
+	});
+
+	const totalQuests = allQuests?.length || 0;
+	const completionPercentage = totalQuests > 0 ? Math.round((totalCompleted / totalQuests) * 100) : 0;
+
 	// If the user is authenticated, display their account info
-	// along with a logout option
+	// along with completed quests dashboard
 	return (
-		<div className="max-w-4xl mx-auto p-8 text-[#FF7A00]">
-			<h2 className="text-2xl font-semibold mb-4">Account</h2>
-			<div>
-				<p><strong>Email:</strong> {user.email}</p>
-				<p><strong>Name:</strong> {user.name || "-"}</p>
-				<form action="/api/auth/logout" method="post" className="mt-4">
-					<button className="px-3 py-1 border rounded cursor-pointer hover:bg-[#FF7A00] hover:text-white transition-all duration-200">Logout</button>
-				</form>
+		<div className="max-w-4xl mx-auto p-8">
+			{/* Account Info Section */}
+			<div className="mb-8 text-[#FF7A00]">
+				<h2 className="text-3xl font-bold mb-4">Account</h2>
+				<div className="bg-white rounded-lg shadow-md p-6 mb-6">
+					<p className="mb-2"><strong>Email:</strong> {user.email}</p>
+					<p className="mb-4"><strong>Name:</strong> {user.name || "-"}</p>
+					<form action="/api/auth/logout" method="post">
+						<button className="px-4 py-2 border-2 border-[#FF7A00] rounded-lg cursor-pointer hover:bg-[#FF7A00] hover:text-white transition-all duration-200 font-semibold">
+							Logout
+						</button>
+					</form>
+				</div>
+			</div>
+
+			{/* Quest Progress Dashboard */}
+			<div className="mb-8">
+				<h2 className="text-3xl font-bold mb-4 text-[#FF7A00] flex items-center gap-2">
+					<Trophy className="w-8 h-8" />
+					Quest Progress
+				</h2>
+				
+				{/* Statistics Card */}
+				<div className="bg-gradient-to-r from-[#00AEEF] to-[#0096D6] text-white rounded-lg shadow-lg p-6 mb-6">
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+						<div className="text-center">
+							<div className="text-4xl font-bold">{totalCompleted}</div>
+							<div className="text-sm opacity-90">Completed</div>
+						</div>
+						<div className="text-center">
+							<div className="text-4xl font-bold">{totalQuests}</div>
+							<div className="text-sm opacity-90">Total Quests</div>
+						</div>
+						<div className="text-center">
+							<div className="text-4xl font-bold">{completionPercentage}%</div>
+							<div className="text-sm opacity-90">Complete</div>
+						</div>
+					</div>
+				</div>
+
+				{/* Completed Quests by Location */}
+				{totalCompleted > 0 ? (
+					<div className="space-y-4">
+						<h3 className="text-2xl font-semibold text-[#FF7A00] mb-4">Completed Quests</h3>
+						{Object.entries(completedByLocation).map(([locationName, quests]) => (
+							<div key={locationName} className="bg-white rounded-lg shadow-md p-6">
+								<div className="flex items-center gap-2 mb-4 text-[#00AEEF]">
+									<MapPin className="w-5 h-5" />
+									<h4 className="text-xl font-bold">{locationName}</h4>
+									<span className="text-sm text-gray-500">({quests.length} completed)</span>
+								</div>
+								<ul className="space-y-2">
+									{quests.map((quest, index) => (
+										<li key={index} className="flex items-start gap-3 p-3 bg-[#FFF6D8] rounded-lg">
+											<CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+											<div className="flex-1">
+												<div className="font-medium text-gray-800">{quest.text}</div>
+												{quest.completed_at && (
+													<div className="text-xs text-gray-500 mt-1">
+														Completed: {new Date(quest.completed_at).toLocaleDateString('en-US', {
+															year: 'numeric',
+															month: 'short',
+															day: 'numeric',
+															hour: '2-digit',
+															minute: '2-digit'
+														})}
+													</div>
+												)}
+											</div>
+										</li>
+									))}
+								</ul>
+							</div>
+						))}
+					</div>
+				) : (
+					<div className="bg-white rounded-lg shadow-md p-8 text-center">
+						<Trophy className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+						<p className="text-lg text-gray-600 mb-2">No quests completed yet!</p>
+						<p className="text-sm text-gray-500">Start exploring the map to complete your first quest.</p>
+						<a 
+							href="/map" 
+							className="inline-block mt-4 px-6 py-2 bg-[#00AEEF] text-white rounded-lg hover:bg-[#0096D6] transition-colors font-semibold"
+						>
+							Go to Map
+						</a>
+					</div>
+				)}
 			</div>
 		</div>
 	);

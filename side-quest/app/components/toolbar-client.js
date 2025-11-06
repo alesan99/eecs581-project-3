@@ -16,7 +16,7 @@ import { Map, Compass, Trophy, User, LogOut } from "lucide-react";
 */
 export default function ToolbarClient({ user }) {
 	return (
-		<nav className="flex items-center justify-between bg-gradient-to-r from-[#00AEEF] to-[#0096D6] text-white px-8 py-4 shadow-lg">
+		<nav className="sticky top-0 z-50 flex items-center justify-between bg-gradient-to-r from-[#00AEEF] to-[#0096D6] text-white px-8 py-4 shadow-lg">
 			<Link 
 				href="/" 
 				className="flex items-center gap-3 group transition-transform hover:scale-105 active:scale-95"
@@ -44,7 +44,7 @@ export default function ToolbarClient({ user }) {
 					<Map className="w-5 h-5 group-hover:scale-110 transition-transform" /> Map
 				</Link>
 				<Link 
-					href="/map" 
+					href="/quests" 
 					className="group flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 hover:text-[#FFDA00] transition-all duration-200 hover:scale-105"
 				>
 					<Compass className="w-5 h-5 group-hover:scale-110 transition-transform" /> Quests
