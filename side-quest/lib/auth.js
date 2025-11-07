@@ -1,12 +1,3 @@
-/*
-	Name: auth.js
-	Description: Utility functions for user authentication.
-	Programmers: Alejandro Sandoval
-	Date: 10/25/2025
-	Revisions: N/A
-	Errors: N/A
-*/
-
 import { createHmac } from "crypto";
 // Secret key for signing tokens; should be stored in environment variable
 const SECRET = process.env.AUTH_SECRET || "missing-secret";
