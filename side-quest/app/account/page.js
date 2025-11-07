@@ -4,6 +4,8 @@
 	Programmers: Alejandro Sandoval, Pashia Vang
 	Date: 10/25/2025
 	Revisions: Added completed quests display - 10/26/2025
+	Input: email, username, user information from server
+	Output: Account page showing user info 
 	Errors: N/A
 */
 
