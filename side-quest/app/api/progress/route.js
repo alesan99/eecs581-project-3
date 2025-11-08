@@ -5,6 +5,8 @@
 	Date: 10/26/2025
 	Revisions: N/A
 	Errors: N/A
+	Input:  User authentication cookie and quest progress data  
+	Output:  Updated or retrieved quest progress information
 */
 
 import { verifyToken } from "../../../lib/auth";
