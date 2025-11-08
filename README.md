@@ -18,3 +18,6 @@ Development documents are located in the documentation folder.
 
 # Running the Project
 Instructions in the README.md in https://github.com/alesan99/eecs581-project-3/tree/main/side-quest
+
+Quick start:
+`npx next dev --turbopack --port 3001`

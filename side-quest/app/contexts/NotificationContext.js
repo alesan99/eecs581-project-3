@@ -14,6 +14,7 @@ export function NotificationProvider({ children }) {
 			message: notification.message,
 			type: notification.type || "info", // 'success', 'info', 'warning', 'error'
 			timestamp: new Date(),
+			lifetime: (notification.lifetime || 5)*1000, // How long the notification lasts in seconds.
 		};
 
 		setNotifications((prev) => [newNotification, ...prev]);
@@ -21,7 +22,7 @@ export function NotificationProvider({ children }) {
 		// Auto-remove notification after 5 seconds
 		setTimeout(() => {
 			setNotifications((prev) => prev.filter((n) => n.id !== id));
-		}, 5000);
+		}, newNotification.lifetime);
 
 		return id;
 	}, []);
