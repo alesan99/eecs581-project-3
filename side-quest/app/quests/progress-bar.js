@@ -1,3 +1,20 @@
+/*
+	Name: progress-bar.js
+	Description: Animated progress bar component that visually fills from 0% to a target percentage when scrolled into view.
+	Programmers: Pashia Vang
+	Date: 10/26/2025
+	Revisions: N/A
+	Errors: N/A
+	Input: 
+		- percentage: Target progress value (0–100)
+		- color (string): Bar fill color
+		- shadowColor (string): Shadow color 
+	Output: 
+		- animated progress bar
+		- Optional sparkle effect when progress reaches 100%
+*/
+
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
