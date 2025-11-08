@@ -5,6 +5,8 @@
 	Date: 10/25/2025
 	Revisions: N/A
 	Errors: N/A
+	Input: Map data, user progress from API, user interactions
+	Output: Interactive map UI with nodes, Dialogs, progress indicators, and notifications
 */
 
 "use client";
