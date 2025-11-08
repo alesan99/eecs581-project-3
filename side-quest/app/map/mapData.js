@@ -7,6 +7,8 @@
 	Errors: N/A
 */
 
+
+
 // Primary map configuration object
 export const mapData = {
 	// Canvas dimensions for the rendered map (virtual coordinates)
@@ -43,6 +45,31 @@ export const mapData = {
 				"Use the sketchy small elevator.",
 				"Find the movie theatre.",
 				"Sit on the painted bench.",
+			]
+		},
+		{
+			id: "e",
+			x: 727,
+			y: 377,
+			label: "Wescoe Hall",
+			quests: [
+				"Get free food in front of Wescoe.",
+				"Get free food in front of Wescoe twice.",
+				"Get free food in front of Wescoe three times.",
+				"Find the vending machines in the underground.",
+			],
+			dependencies: {
+				1: 0,
+				2: 1,
+			}
+		},
+		{
+			id: "f",
+			x: 814,
+			y: 84,
+			label: "Campanile",
+			quests: [
+				"Walk under the bell tower.",
 			]
 		},
 		{

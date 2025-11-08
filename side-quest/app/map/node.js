@@ -160,8 +160,22 @@ export function NodeDialog({ node, containerRef, pan, toggles = {}, onToggle, on
 
 			<div className="mb-2 text-sm text-gray-600 dark:text-gray-300">Quests</div>
 			<div className="flex flex-col gap-2">
-				{node.quests.map(opt => {
+				{node.quests.map((opt, i) => {
+					// Is quest checked off?
 					const isCompleted = !!toggles?.[opt];
+
+					// Check dependencies
+					let deps = [];
+					if (node.dependencies && node.dependencies[i] !== undefined) {
+						deps = [node.dependencies[i]]; // see if dependencies are defined.
+					}
+                    const depsSatisfied = deps.every(index => {
+						// Check to make sure all quests in dependencies are checked off.
+                        const quest = node.quests[index];
+                        return !!toggles?.[quest];
+                    });
+                    const disabled = deps.length > 0 && !depsSatisfied; // Should the checkbox be disabled?
+
 					return (
 						<label 
 							key={opt} 
@@ -170,8 +184,9 @@ export function NodeDialog({ node, containerRef, pan, toggles = {}, onToggle, on
 							}`}
 						>
 							<input 
-								type="checkbox" 
+								type="checkbox"
 								checked={isCompleted} 
+                                disabled={disabled}
 								onChange={() => onToggle(opt)} 
 								className="cursor-pointer"
 							/>
