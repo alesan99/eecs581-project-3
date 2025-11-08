@@ -5,6 +5,12 @@
 	Date: 10/25/2025
 	Revisions: N/A
 	Errors: N/A
+	Input: 
+		HTTP POST request containing JSON body: { email, password }
+		
+	Output:
+		On success: JSON { ok: true } and a session cookie ("sid") set in the response
+		On failure: JSON { message: "Invalid credentials" } with HTTP 401 status
 */
 
 import { createAdminClient } from "../../../../lib/supabase/admin";
