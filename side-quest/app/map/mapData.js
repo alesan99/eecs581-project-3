@@ -5,6 +5,8 @@
 	Date: 10/25/2025
 	Revisions: N/A
 	Errors: N/A
+	Input: None (static map def)
+	Output: Map object containing campus nodes, quests, links, and background info
 */
 
 
