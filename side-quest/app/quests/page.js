@@ -5,6 +5,14 @@
 	Date: 10/26/2025
 	Revisions: N/A
 	Errors: N/A
+	Input: 
+		- User auth token (cookie)
+		- Quest data from database (locations, quests)
+		- User progress data (completed quests)
+	Output: 
+		- Rendered page showing quests by location
+		- Completion statistics
+		- progress bars, notifications
 */
 
 import { requireAuthOrRedirect } from "@/lib/requireAuth";
