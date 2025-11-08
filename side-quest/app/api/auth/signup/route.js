@@ -5,6 +5,8 @@
 	Date: 10/25/2025
 	Revisions: N/A
 	Errors: N/A
+	Input: User’s name, email, and password from signup form
+	Output: New user account created and session cookie set for authentication
 */
 
 import { createAdminClient } from "../../../../lib/supabase/admin";
