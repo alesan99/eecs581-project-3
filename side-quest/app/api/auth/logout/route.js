@@ -5,6 +5,8 @@
 	Date: 10/25/2025
 	Revisions: N/A
 	Errors: N/A
+	Input: User logout request via session cookie
+	Output: Print message and user redirected to login page
 */
 
 export async function POST() {
