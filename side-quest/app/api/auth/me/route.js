@@ -5,6 +5,8 @@
 	Date: 10/25/2025
 	Revisions: N/A
 	Errors: N/A
+	Input: Session cookie containing user token
+	Output: JSON response with current user data or null if not logged in
 */
 
 import { verifyToken } from "../../../../lib/auth";
