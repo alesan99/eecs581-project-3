@@ -5,6 +5,8 @@
 	Date: 10/25/2025
 	Revisions: N/A
 	Errors: N/A
+	Input: Node data object, user interaction handlers, quest completion info
+	Output: Node component & displaying progress & interactive quests
 */
 
 "use client";
