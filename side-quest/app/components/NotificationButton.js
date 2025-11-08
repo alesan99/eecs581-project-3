@@ -1,3 +1,15 @@
+/*
+Name: NotificationButton.js
+Description: Renders a bell button showing unread notifications and a dropdown list of notifications.
+Programmers: Alejandro Sandoval
+Date: 10/25/2025
+Revisions: N/A
+Errors: N/A
+Input: Notifications from context
+Output: showing dropdown list of notifications
+*/
+
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
