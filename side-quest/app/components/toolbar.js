@@ -5,6 +5,8 @@
 	Date: 10/25/2025
 	Revisions: N/A
 	Errors: N/A
+	Input: Session cookie from request headers
+	Output: ToolbarClient component with user info if authenticated, or null 
 */
 
 import Link from "next/link";
