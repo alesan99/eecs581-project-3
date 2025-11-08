@@ -5,6 +5,9 @@
 	Date: 10/25/2025
 	Revisions: N/A
 	Errors: N/A
+	Input: Global user progress data from the server
+	Output: Leaderboard page displaying user rankings
+	
 */
 
 export default function LeaderboardsPage() {
