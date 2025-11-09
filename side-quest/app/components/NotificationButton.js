@@ -58,13 +58,13 @@ export default function NotificationButton() {
 	const getBgColor = (type) => {
 		switch (type) {
 			case "success":
-				return "bg-green-50 border-green-200";
+				return "bg-green-50 border-green-300";
 			case "warning":
-				return "bg-yellow-50 border-yellow-200";
+				return "bg-yellow-50 border-yellow-300";
 			case "error":
-				return "bg-red-50 border-red-200";
+				return "bg-red-50 border-red-300";
 			default:
-				return "bg-blue-50 border-blue-200";
+				return "bg-blue-50 border-blue-300";
 		}
 	};
 
@@ -86,43 +86,48 @@ export default function NotificationButton() {
 
 			{/* Dropdown */}
 			{isOpen && (
-				<div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-96 overflow-hidden flex flex-col">
+				<div className="absolute right-0 mt-3 w-[22rem] max-h-[26rem] rounded-3xl bg-white/95 shadow-[6px_8px_0_rgba(0,0,0,0.12)] border-4 border-[#00AEEF] overflow-hidden z-50 backdrop-blur-lg animate-[fadeIn_0.25s_ease-out]">
 					{/* Header */}
-					<div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-[#00AEEF] to-[#0096D6]">
-						<h3 className="text-white font-bold text-lg">Notifications</h3>
+					<div className="relative flex items-center justify-between px-5 py-4 bg-gradient-to-r from-[#00AEEF] to-[#0096D6]">
+						<div className="flex flex-col text-left text-white">
+							<span className="text-xs uppercase tracking-[0.35em] opacity-80">Activity Feed</span>
+							<h3 className="text-xl font-black drop-shadow-[2px_2px_0_rgba(0,0,0,0.18)]">Notifications</h3>
+						</div>
 						{notifications.length > 0 && (
 							<button
 								onClick={clearAll}
-								className="text-white hover:text-[#FFDA00] text-sm font-semibold transition-colors"
+								className="text-xs font-semibold uppercase tracking-[0.2em] px-3 py-1 rounded-full border border-white/50 text-white/80 hover:text-white hover:border-white transition-all duration-150"
 							>
-								Clear all
+								Clear
 							</button>
 						)}
+						<div className="absolute -bottom-6 right-6 w-12 h-12 bg-white/40 blur-2xl rounded-full pointer-events-none" />
 					</div>
 
 					{/* Notifications List */}
-					<div className="overflow-y-auto flex-1">
+					<div className="relative overflow-y-auto max-h-[20rem] px-3 py-4 bg-[radial-gradient(circle_at_top,#E0F2FF,transparent_70%)]">
 						{notifications.length === 0 ? (
-							<div className="p-8 text-center text-gray-500">
-								<Bell className="w-12 h-12 mx-auto mb-2 text-gray-300" />
-								<p className="text-sm">No notifications</p>
+							<div className="flex flex-col items-center justify-center py-12 text-gray-400">
+								<Bell className="w-14 h-14 mb-3 text-[#00AEEF]/40" />
+								<p className="text-sm font-semibold">All caught up!</p>
+								<p className="text-xs text-gray-400/80 mt-1">We’ll drop new quests here.</p>
 							</div>
 						) : (
-							<div className="divide-y divide-gray-100">
+							<div className="space-y-3">
 								{notifications.map((notification) => (
 									<div
 										key={notification.id}
-										className={`p-4 border-l-4 ${getBgColor(notification.type)} hover:bg-opacity-80 transition-colors group`}
+										className={`group relative p-4 rounded-2xl border-[3px] shadow-[6px_6px_0_rgba(0,0,0,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[10px_12px_0_rgba(0,0,0,0.18)] ${getBgColor(notification.type)}`}
 									>
 										<div className="flex items-start gap-3">
-											<div className="flex-shrink-0 mt-0.5">
+											<div className="flex-shrink-0 mt-0.5 drop-shadow-[0_0_8px_rgba(255,255,255,0.65)]">
 												{getIcon(notification.type)}
 											</div>
 											<div className="flex-1 min-w-0">
-												<p className="text-sm text-gray-800 font-medium">
+												<p className="text-sm font-semibold text-gray-800 leading-tight">
 													{notification.message}
 												</p>
-												<p className="text-xs text-gray-500 mt-1">
+												<p className="text-xs text-gray-500 mt-2 uppercase tracking-[0.2em]">
 													{notification.timestamp.toLocaleTimeString([], {
 														hour: "2-digit",
 														minute: "2-digit",
@@ -131,11 +136,12 @@ export default function NotificationButton() {
 											</div>
 											<button
 												onClick={() => removeNotification(notification.id)}
-												className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-200 rounded"
+												className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full border border-transparent hover:border-gray-300 hover:bg-white/70"
 											>
-												<X className="w-4 h-4 text-gray-500" />
+												<X className="w-4 h-4 text-gray-400" />
 											</button>
 										</div>
+										<div className="absolute -bottom-2 left-6 w-16 h-4 bg-white/60 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
 									</div>
 								))}
 							</div>
