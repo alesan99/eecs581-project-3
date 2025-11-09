@@ -75,11 +75,17 @@ export async function POST(req) {
 		exp: Date.now() + 1000 * 60 * 60 * 24 * 30
 	});
 
-	// Store the session token 
-	const cookie = `sid=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`;
-	// Return a success response and set the session cookie
+	// Store the session token and welcome state cookie
+	const sessionCookie = `sid=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`;
+	const welcomeCookie = `welcome_new=1; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`;
+
+	const headers = new Headers({ "Content-Type": "application/json" });
+	headers.append("Set-Cookie", sessionCookie);
+	headers.append("Set-Cookie", welcomeCookie);
+
+	// Return a success response and set the cookies
 	return new Response(JSON.stringify({ ok: true }), {
 		status: 200,
-		headers: { "Set-Cookie": cookie, "Content-Type": "application/json" },
+		headers,
 	});
 }

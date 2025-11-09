@@ -15,7 +15,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Map, Compass, Backpack, UserPlus } from "lucide-react";
-import { useNotifications } from "../contexts/NotificationContext";
 
 /*
 	Component: SignupPage
@@ -25,7 +24,6 @@ import { useNotifications } from "../contexts/NotificationContext";
 		Submits signup data to API and handles errors.
 */
 export default function SignupPage() {
-	const { addNotification } = useNotifications(); // Add welcome message on successful sign up.
 	const [name, setName] = useState("");  // name input state
 	const [email, setEmail] = useState("");  // email input state
 	const [password, setPassword] = useState("");  // password input state
@@ -66,12 +64,6 @@ export default function SignupPage() {
 			// Proceed to map page
 			router.push("/map");
 			router.refresh();
-			// Add welcome notification
-			addNotification({
-				type: "info",
-				message: "Welcome to Side Quest! You may now navigate the campus map and view quests at each location!",
-				lifetime: 20,
-			});
 		} else {
 			// Show signup error
 			const payload = await res.json();

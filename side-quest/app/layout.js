@@ -3,7 +3,9 @@
 	Description: Defines common styles used across all pages in the app.
 	Programmers: Aiden Barnard, Alejandro Sandoval, Pashia Vang
 	Date: 10/25/2025
-	Revisions: Add notifications - 11/06/2025
+	Revisions: 
+		Add notifications - 11/06/2025
+		Add welcome modal - 11/09/2025
 	Errors: N/A
 	Input:
 		Style request from page
@@ -16,6 +18,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Toolbar from "./components/toolbar";
 import { NotificationProvider } from "./contexts/NotificationContext";
+import WelcomeModal from "./components/welcome-modal";
 
 // Project Description //
 export const metadata = {
@@ -46,6 +49,7 @@ export default function RootLayout({ children }) {
 			>
 				<NotificationProvider>
 					<Toolbar/>
+					<WelcomeModal />
 					<main className="flex-1 flex flex-col">
 						{children}
 					</main>
