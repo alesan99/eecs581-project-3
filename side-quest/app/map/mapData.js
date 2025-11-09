@@ -59,8 +59,9 @@ export const mapData = {
 				"Find the vending machines in the underground.",
 			],
 			dependencies: {
-				1: 0,
-				2: 1,
+				1: [0],
+				2: [1],
+				3: [2],
 			}
 		},
 		{

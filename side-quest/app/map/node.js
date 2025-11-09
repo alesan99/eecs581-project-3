@@ -166,23 +166,40 @@ export function NodeDialog({ node, containerRef, pan, toggles = {}, onToggle, on
 					// Is quest checked off?
 					const isCompleted = !!toggles?.[opt];
 
-					// Check dependencies
-					let deps = [];
-					if (node.dependencies && node.dependencies[i] !== undefined) {
-						deps = [node.dependencies[i]]; // see if dependencies are defined.
-					}
-                    const depsSatisfied = deps.every(index => {
-						// Check to make sure all quests in dependencies are checked off.
-                        const quest = node.quests[index];
-                        return !!toggles?.[quest];
-                    });
-                    const disabled = deps.length > 0 && !depsSatisfied; // Should the checkbox be disabled?
+					// Normalize dependencies to array of quest indices
+					const rawDeps = node.dependencies?.[i];
+					const deps = Array.isArray(rawDeps)
+						? rawDeps
+						: rawDeps !== undefined
+							? [rawDeps]
+							: [];
+
+					const depsSatisfied = deps.every(index => {
+						const quest = node.quests[index];
+						return !!toggles?.[quest];
+					});
+
+					const dependentsCompleted = node.quests.some((questText, idx) => {
+						const rawDep = node.dependencies?.[idx];
+						const depList = Array.isArray(rawDep)
+							? rawDep
+							: rawDep !== undefined
+								? [rawDep]
+								: [];
+						return depList.includes(i) && !!toggles?.[questText];
+					});
+
+					const disabled = (!depsSatisfied && !isCompleted) || dependentsCompleted;
+
+					const isUnlocked = depsSatisfied;
 
 					return (
 						<label 
 							key={opt} 
 							className={`flex items-center gap-2 p-2 rounded transition-colors ${
 								isCompleted ? 'bg-green-50 dark:bg-green-900/20' : ''
+							} ${
+								!isUnlocked && !isCompleted ? 'opacity-60 cursor-not-allowed' : ''
 							}`}
 						>
 							<input 
@@ -190,9 +207,17 @@ export function NodeDialog({ node, containerRef, pan, toggles = {}, onToggle, on
 								checked={isCompleted} 
                                 disabled={disabled}
 								onChange={() => onToggle(opt)} 
-								className="cursor-pointer"
+								className={`${
+									disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+								}`}
 							/>
-							<span className={`text-sm ${isCompleted ? 'line-through text-gray-500' : ''}`}>
+							<span
+								className={`text-sm ${
+									isCompleted ? 'line-through text-gray-500' : ''
+								} ${deps.length > 0 ? 'pl-4' : ''} ${
+									(!isUnlocked && !isCompleted) || dependentsCompleted ? 'text-gray-400' : ''
+								}`}
+							>
 								{opt}
 							</span>
 						</label>

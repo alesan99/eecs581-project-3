@@ -180,9 +180,56 @@ function MapCanvas() {
 		const node = nodes.find(n => n.id === nodeId);
 		if (!node) return;
 
+		const questIndex = node.quests.indexOf(option);
+		if (questIndex === -1) return;
+
 		// Get current completion state
 		const currentState = nodeToggles[nodeId]?.[option] || false;
 		const newState = !currentState;
+
+		// Gather dependencies for the quest being toggled
+		const rawDeps = node.dependencies?.[questIndex];
+		const deps = Array.isArray(rawDeps)
+			? rawDeps
+			: rawDeps !== undefined
+				? [rawDeps]
+				: [];
+
+		// Helper to check if dependencies are satisfied
+		const depsSatisfied = deps.every(depIndex => {
+			const depQuest = node.quests[depIndex];
+			return !!nodeToggles[nodeId]?.[depQuest];
+		});
+
+		// Helper to see if this quest has dependents already completed
+		const dependentLocked = node.quests.some((questText, idx) => {
+			const otherRawDeps = node.dependencies?.[idx];
+			const otherDeps = Array.isArray(otherRawDeps)
+				? otherRawDeps
+				: otherRawDeps !== undefined
+					? [otherRawDeps]
+					: [];
+			return (
+				otherDeps.includes(questIndex) &&
+				nodeToggles[nodeId]?.[questText]
+			);
+		});
+
+		if (newState && !depsSatisfied) {
+			addNotification({
+				type: "warning",
+				message: "Complete the previous quest before checking this one.",
+			});
+			return;
+		}
+
+		if (!newState && dependentLocked) {
+			addNotification({
+				type: "warning",
+				message: "Uncheck dependent quests first before undoing this one.",
+			});
+			return;
+		}
 
 		// Optimistically update UI
 		setNodeToggles(prev => ({
