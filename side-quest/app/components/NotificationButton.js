@@ -29,7 +29,7 @@ export default function NotificationButton() {
 			}
 		}
 
-		if (isOpen) {
+		if (isOpen) { // only listen for event if notif is open.
 			document.addEventListener("mousedown", handleClickOutside);
 		}
 
@@ -40,6 +40,7 @@ export default function NotificationButton() {
 
 	const unreadCount = notifications.length;
 
+	// Get Icon based on notification type
 	const getIcon = (type) => {
 		switch (type) {
 			case "success":
@@ -53,6 +54,7 @@ export default function NotificationButton() {
 		}
 	};
 
+	// Get background color based on notification type
 	const getBgColor = (type) => {
 		switch (type) {
 			case "success":

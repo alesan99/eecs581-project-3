@@ -9,8 +9,6 @@
 	Output: Map object containing campus nodes, quests, links, and background info
 */
 
-
-
 // Primary map configuration object
 export const mapData = {
 	// Canvas dimensions for the rendered map (virtual coordinates)

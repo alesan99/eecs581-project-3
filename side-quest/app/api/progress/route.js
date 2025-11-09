@@ -184,6 +184,7 @@ export async function POST(req) {
 		result = { data, error };
 	}
 
+	// Send error response if something went wrong. The client will see a notification.
 	if (result.error) {
 		return new Response(
 			JSON.stringify({ message: "Failed to save progress", error: result.error.message }),
@@ -191,6 +192,7 @@ export async function POST(req) {
 		);
 	}
 
+	// Success.
 	return new Response(
 		JSON.stringify({ success: true, progress: result.data }),
 		{ status: 200, headers: { "Content-Type": "application/json" } }

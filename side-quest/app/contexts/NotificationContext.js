@@ -13,11 +13,13 @@
 
 import { createContext, useContext, useState, useCallback } from "react";
 
+// Use context to allow other files to create notifications.
 const NotificationContext = createContext(null);
 
 export function NotificationProvider({ children }) {
 	const [notifications, setNotifications] = useState([]);
 
+	// Function to add a notification. This can be imported in other files to trigger a notification.
 	const addNotification = useCallback((notification) => {
 		const id = Date.now() + Math.random();
 		const newNotification = {
@@ -38,10 +40,12 @@ export function NotificationProvider({ children }) {
 		return id;
 	}, []);
 
+	// Function to clear *specific* notification
 	const removeNotification = useCallback((id) => {
 		setNotifications((prev) => prev.filter((n) => n.id !== id));
 	}, []);
 
+	// Function to clear all notifications
 	const clearAll = useCallback(() => {
 		setNotifications([]);
 	}, []);
@@ -60,6 +64,7 @@ export function NotificationProvider({ children }) {
 	);
 }
 
+// Allow other files to trigger and remove notifications with this.
 export function useNotifications() {
 	const context = useContext(NotificationContext);
 	if (!context) {

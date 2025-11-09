@@ -81,6 +81,7 @@ export default function AnimatedProgressBar({ percentage, color, shadowColor }) 
 			ref={progressRef}
 			className="mb-6 h-5 bg-gray-100 rounded-full overflow-hidden border-2 border-gray-200"
 		>
+			{/* Progress fill based on animatedPercentage */}
 			<div 
 				className="h-full transition-all duration-700 rounded-full relative"
 				style={{ 
@@ -89,6 +90,7 @@ export default function AnimatedProgressBar({ percentage, color, shadowColor }) 
 					transition: 'width 0.05s ease-out'
 				}}
 			>
+				{/* Sparkle when animation reaches 100% */}
 				{animatedPercentage === percentage && percentage === 100 && (
 					<div className="absolute inset-0 flex items-center justify-center">
 						<Sparkles className="w-4 h-4 text-white animate-pulse" />

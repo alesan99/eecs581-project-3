@@ -91,9 +91,10 @@ export default async function QuestsPage() {
 	let totalQuests = 0;
 
 	allQuests?.forEach(quest => {
+		// Find quest
 		const location = Array.isArray(quest.locations) ? quest.locations[0] : quest.locations;
 		if (!location) return;
-
+		// Get quest information
 		const locationName = location.name;
 		if (!questsByLocation[locationName]) {
 			questsByLocation[locationName] = [];
@@ -102,6 +103,7 @@ export default async function QuestsPage() {
 		const questProgress = progressMap[quest.quest_id];
 		const isCompleted = questProgress?.completed || false;
 		
+		// Gather stats to calculate total progression
 		if (isCompleted) {
 			totalCompleted++;
 		}
@@ -115,6 +117,7 @@ export default async function QuestsPage() {
 		});
 	});
 
+	// Calculate total quest completion percentage based on stats from above.
 	const completionPercentage = totalQuests > 0 ? Math.round((totalCompleted / totalQuests) * 100) : 0;
 
 	return (
