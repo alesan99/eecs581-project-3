@@ -1,9 +1,9 @@
 /*
 	Name: page.js
 	Description: Page to view leaderboard of global user progress.
-	Programmers: Alejandro Sandoval
+	Programmers: Alejandro Sandoval, Pashia Vang
 	Date: 10/25/2025
-	Revisions: N/A
+	Revisions: Update UI style - 10/26/2025
 	Errors: N/A
 	Input: Global user progress data from the server
 	Output: Leaderboard page displaying user rankings

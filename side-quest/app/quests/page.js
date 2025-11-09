@@ -2,7 +2,7 @@
 	Name: quests/page.js
 	Description: Quests page showing all quests with completion status.
 	Programmers: Pashia Vang
-	Date: 10/26/2025
+	Date: 11/06/2025
 	Revisions: N/A
 	Errors: N/A
 	Input: 

@@ -1,7 +1,7 @@
 /*
 	Name: node.js
 	Description: Definition of node components.
-	Programmers: Alejandro Sandoval
+	Programmers: Alejandro Sandoval, Pashia Vang
 	Date: 10/25/2025
 	Revisions: N/A
 	Errors: N/A

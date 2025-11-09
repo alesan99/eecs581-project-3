@@ -2,7 +2,7 @@
 	Name: progress-bar.js
 	Description: Animated progress bar component that visually fills from 0% to a target percentage when scrolled into view.
 	Programmers: Pashia Vang
-	Date: 10/26/2025
+	Date: 11/06/2025
 	Revisions: N/A
 	Errors: N/A
 	Input: 

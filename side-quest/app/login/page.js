@@ -1,9 +1,9 @@
 /*
 	Name: login/page.js
 	Description: Page to prompt user to log in.
-	Programmers: Alejandro Sandoval
+	Programmers: Alejandro Sandoval, Pashia Vang
 	Date: 10/25/2025
-	Revisions: N/A
+	Revisions: Update UI style - 10/26/206
 	Errors: N/A
 	Input: Global user progress data from the server
 	Output: Leaderboard page displaying user rankings

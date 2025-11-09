@@ -2,7 +2,7 @@
 	Name: Progress API endpoint
 	Description: Gets and saves user quest progress.
 	Programmers: Pashia Vang
-	Date: 10/26/2025
+	Date: 11/06/2025
 	Revisions: N/A
 	Errors: N/A
 	Input:  User authentication cookie and quest progress data  

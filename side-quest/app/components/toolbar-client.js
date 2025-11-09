@@ -1,9 +1,9 @@
 /*
 	Name: toolbar-client.js
 	Description: Renders the client-side toolbar with navigation, user info, and notifications.
-	Programmers: Alejandro Sandoval
+	Programmers: Alejandro Sandoval, Pashia Vang
 	Date: 10/25/2025
-	Revisions: N/A
+	Revisions: Add notifications - 11/06/2025
 	Errors: N/A
 	Input: User object (name, email) from parent component
 	Output: Navigation toolbar with links, login/logout buttons, and notifications

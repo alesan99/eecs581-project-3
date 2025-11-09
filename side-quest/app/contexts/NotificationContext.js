@@ -1,8 +1,8 @@
 /*
 	Name: NotificationContext.js
 	Description: Provides a React context for managing in-app notifications.
-	Programmers: Alejandro Sandoval
-	Date: 10/25/2025
+	Programmers: Pashia Vang
+	Date: 11/06/2025
 	Revisions: N/A
 	Errors: N/A
 	Input: Calls to addNotification, removeNotification

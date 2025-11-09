@@ -1,9 +1,9 @@
 /*
 	Name: Logout API endpoint
 	Description: Logs a user out upon request
-	Programmers: Alejandro Sandoval
+	Programmers: Alejandro Sandoval, Pashia Vang
 	Date: 10/25/2025
-	Revisions: N/A
+	Revisions: Integrated Supabase - 11/06/2025
 	Errors: N/A
 	Input: User logout request via session cookie
 	Output: Print message and user redirected to login page

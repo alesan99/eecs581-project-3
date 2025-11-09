@@ -1,7 +1,7 @@
 /*
 	Name: Signup API endpoint
 	Description: Creates a new user account.
-	Programmers: Alejandro Sandoval
+	Programmers: Pashia Vang
 	Date: 10/25/2025
 	Revisions: N/A
 	Errors: N/A
