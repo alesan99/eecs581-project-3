@@ -1,10 +1,14 @@
 /*
 	Name: page.js
 	Description: Main landing page of Side Quest with hero section, stats, and CTA.
-	Programmers: Aidan Barnard, Alejandro Sandoval
+	Programmers: Aidan Barnard, Alejandro Sandoval, Pashia Vang
 	Date: 10/25/2025
-	Revisions: N/A
+	Revisions: Update UI style - 10/26/2025
 	Errors: N/A
+	Input:
+		Home navigation or initial website load
+	Output:
+		Rendered home page with buttons to access other parts of the website
 */
 
 "use client";

@@ -1,12 +1,12 @@
 /*
-Name: NotificationButton.js
-Description: Renders a bell button showing unread notifications and a dropdown list of notifications.
-Programmers: Pashia Vang
-Date: 11/06/2025
-Revisions: N/A
-Errors: N/A
-Input: Notifications from context
-Output: showing dropdown list of notifications
+	Name: NotificationButton.js
+	Description: Renders a bell button showing unread notifications and a dropdown list of notifications.
+	Programmers: Pashia Vang
+	Date: 11/06/2025
+	Revisions: N/A
+	Errors: N/A
+	Input: Notifications from context
+	Output: showing dropdown list of notifications
 */
 
 

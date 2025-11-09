@@ -5,6 +5,8 @@
 	Date: 10/25/2025
 	Revisions: N/A
 	Errors: N/A
+	Input: User auth status
+	Output: Rendered page for creating an account
 */
 
 "use client";

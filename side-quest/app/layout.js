@@ -5,6 +5,11 @@
 	Date: 10/25/2025
 	Revisions: Add notifications - 11/06/2025
 	Errors: N/A
+	Input:
+		Style request from page
+	Output:
+		Root layout style
+		Fonts
 */
 
 import { Geist, Geist_Mono } from "next/font/google";

@@ -3,7 +3,7 @@
 	Description: Definition of node components.
 	Programmers: Alejandro Sandoval, Pashia Vang
 	Date: 10/25/2025
-	Revisions: N/A
+	Revisions: Add progress bars - 11/06/2025
 	Errors: N/A
 	Input: Node data object, user interaction handlers, quest completion info
 	Output: Node component & displaying progress & interactive quests

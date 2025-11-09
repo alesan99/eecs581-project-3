@@ -5,6 +5,10 @@
 	Date: 10/25/2025
 	Revisions: N/A
 	Errors: N/A
+	Input: Incoming page requests
+	Output:
+		Handled page response, handles routing
+		Login redirection if needed
 */
 
 import { NextResponse } from "next/server";
