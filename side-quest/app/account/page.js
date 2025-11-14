@@ -66,17 +66,22 @@ export default async function AccountPage() {
 	let totalCompleted = 0;
 
 	progress?.forEach(p => {
+		// normalize nested quest data
 		const quest = Array.isArray(p.quests) ? p.quests[0] : p.quests;
 		if (!quest) return;
 		
+		// normalize nested location data
 		const location = Array.isArray(quest.locations) ? quest.locations[0] : quest.locations;
 		if (!location) return;
 
 		const locationName = location.name;
+
+		// initialize location group if it doesn't exist
 		if (!completedByLocation[locationName]) {
 			completedByLocation[locationName] = [];
 		}
 		
+		// store quest info under its location
 		completedByLocation[locationName].push({
 			text: quest.text,
 			completed_at: p.completed_at
@@ -84,6 +89,7 @@ export default async function AccountPage() {
 		totalCompleted++;
 	});
 
+	// calculate total quests and completion percentage
 	const totalQuests = allQuests?.length || 0;
 	const completionPercentage = totalQuests > 0 ? Math.round((totalCompleted / totalQuests) * 100) : 0;
 
@@ -166,6 +172,7 @@ export default async function AccountPage() {
 						))}
 					</div>
 				) : (
+					// display when no quests completed
 					<div className="bg-white rounded-lg shadow-md p-8 text-center">
 						<Trophy className="w-16 h-16 text-gray-300 mx-auto mb-4" />
 						<p className="text-lg text-gray-600 mb-2">No quests completed yet!</p>
