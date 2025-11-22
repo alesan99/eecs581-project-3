@@ -25,7 +25,7 @@ import { useNotifications } from "../contexts/NotificationContext";
 */
 export default function MapPage() {
 	return (
-		<div className="page flex-1 flex flex-col w-full">
+		<div className="h-full bg-gradient-to-br from-[#FFF6D8] via-yellow-50 to-orange-50 p-8 relative overflow-hidden">
 			<MapCanvas />
 		</div>
 	);
@@ -318,7 +318,7 @@ function MapCanvas() {
 			ref={containerRef}
 			className={`relative w-full h-full ${
 				isPanning ? "cursor-grabbing" : "cursor-grab"
-			} bg-gray-50 dark:bg-gray-900 overflow-hidden border rounded`}
+			} bg-gray-50 overflow-hidden border rounded border border-gray-400`}
 			onPointerDown={onPointerDown}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}

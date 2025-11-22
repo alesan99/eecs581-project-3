@@ -191,7 +191,7 @@ export function NodeDialog({ node, containerRef, pan, toggles = {}, onToggle, on
 
 					const disabled = (!depsSatisfied && !isCompleted) || dependentsCompleted;
 
-					const isUnlocked = depsSatisfied;
+					const isUnlocked = depsSatisfied; // Have all dependencies been met?
 
 					return (
 						<label 
