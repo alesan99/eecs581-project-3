@@ -1,9 +1,9 @@
 /*
 	Name: NotificationButton.js
 	Description: Renders a bell button showing unread notifications and a dropdown list of notifications.
-	Programmers: Pashia Vang
+	Programmers: Pashia Vang, Alejandro Sandoval
 	Date: 11/06/2025
-	Revisions: N/A
+	Revisions: Fixed positioning on phones - 11/22/2025
 	Errors: N/A
 	Input: Notifications from context
 	Output: showing dropdown list of notifications
@@ -19,6 +19,9 @@ import { useNotifications } from "../contexts/NotificationContext";
 export default function NotificationButton() {
 	const [isOpen, setIsOpen] = useState(false);
 	const dropdownRef = useRef(null);
+    const buttonRef = useRef(null);
+    const popupRef = useRef(null);
+    const [popupStyle, setPopupStyle] = useState({});
 	const { notifications, removeNotification, clearAll } = useNotifications();
 
 	// Close dropdown when clicking outside
@@ -28,15 +31,63 @@ export default function NotificationButton() {
 				setIsOpen(false);
 			}
 		}
-
 		if (isOpen) { // only listen for event if notif is open.
 			document.addEventListener("mousedown", handleClickOutside);
 		}
-
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
 	}, [isOpen]);
+
+	// Push notification menu to be on screen (for phones)
+    useEffect(() => {
+        // clear positioning when closed
+        if (!isOpen) {
+            setPopupStyle({});
+            return;
+        }
+
+        let mounted = true;
+        const padding = 8;
+        function updatePosition() {
+			// Get popup components
+            const btn = buttonRef.current;
+            const popup = popupRef.current;
+            const container = dropdownRef.current;
+            if (!btn || !popup || !container || !mounted) return;
+            const btnRect = btn.getBoundingClientRect();
+            const popupRect = popup.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+
+            // Prefer aligning popup's right edge to the button's right edge
+            let targetLeft = Math.round(btnRect.right - popupRect.width);
+            // Clamp to viewport with padding
+            const maxLeft = Math.max(window.innerWidth - popupRect.width - padding, padding);
+            if (targetLeft < padding) targetLeft = padding;
+            if (targetLeft > maxLeft) targetLeft = maxLeft;
+            const relLeft = targetLeft - containerRect.left; // convert to container-local coordinates
+            // Check if popup overflows past the screen
+            if (relLeft < padding || relLeft + popupRect.width > containerRect.width - padding) {
+                // Always keep it on screen with a fixed position
+                setPopupStyle({position: "fixed", left: `${targetLeft}px`, top: `${btnRect.bottom + 8}px`, right: "auto"});
+            } else {
+                setPopupStyle({position: "absolute", left: `${relLeft}px`, right: "auto", top: undefined});
+            }
+        }
+        // run once after mount to keep it up to date
+        const raf = requestAnimationFrame(updatePosition);
+        window.addEventListener("resize", updatePosition);
+        // Re-calculate position on new notifications
+        const observer = new MutationObserver(() => updatePosition());
+        if (popupRef.current) observer.observe(popupRef.current, { childList: true, subtree: true });
+
+        return () => {
+            mounted = false;
+            cancelAnimationFrame(raf);
+            window.removeEventListener("resize", updatePosition);
+            observer.disconnect();
+        };
+    }, [isOpen, notifications.length]);
 
 	const unreadCount = notifications.length;
 
@@ -72,6 +123,7 @@ export default function NotificationButton() {
 		<div className="relative" ref={dropdownRef}>
 			{/* Notification Bell Button */}
 			<button
+                ref={buttonRef}
 				onClick={() => setIsOpen(!isOpen)}
 				className="relative p-2 rounded-lg hover:bg-white/10 transition-all duration-200 flex items-center justify-center group"
 				title="Notifications"
@@ -86,7 +138,11 @@ export default function NotificationButton() {
 
 			{/* Dropdown */}
 			{isOpen && (
-				<div className="absolute right-0 mt-3 w-[22rem] max-h-[26rem] rounded-3xl bg-white/95 shadow-[6px_8px_0_rgba(0,0,0,0.12)] border-4 border-[#00AEEF] overflow-hidden z-50 backdrop-blur-lg animate-[fadeIn_0.25s_ease-out]">
+				<div 
+                    ref={popupRef}
+					className="absolute right-0 mt-3 w-[22rem] max-h-[26rem] rounded-3xl bg-white/95 shadow-[6px_8px_0_rgba(0,0,0,0.12)] border-4 border-[#00AEEF] overflow-hidden z-50 backdrop-blur-lg animate-[fadeIn_0.25s_ease-out]"
+					style={popupStyle}
+				>
 					{/* Header */}
 					<div className="relative flex items-center justify-between px-5 py-4 bg-gradient-to-r from-[#00AEEF] to-[#0096D6]">
 						<div className="flex flex-col text-left text-white">
