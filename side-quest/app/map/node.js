@@ -11,6 +11,9 @@
 
 "use client";
 
+import { useState, useRef } from "react";
+import { QuestCheckAnimation } from "./checkAnimation";
+
 export function Node({ node, onPointerDown, onClick, completedCount = 0, totalCount = 0 }) {
 	/*
 		Name: Node component
@@ -115,7 +118,22 @@ export function Node({ node, onPointerDown, onClick, completedCount = 0, totalCo
 }
 
 export function NodeDialog({ node, containerRef, pan, toggles = {}, onToggle, onClose }) {
-	if (!node) return null;
+	const [animMap, setAnimMap] = useState({});
+	const dialogRef = useRef(null);
+	if (!node) return null; // node must be defined
+
+	// Set up animation
+    function triggerAnim(key, e) {
+        if (!dialogRef.current || !e) return;
+		// calculate position from the user's click
+        const inputRect = e.getBoundingClientRect();
+        const dialogRect = dialogRef.current.getBoundingClientRect();
+        const x = inputRect.left - dialogRect.left + inputRect.width / 2;
+        const y = inputRect.top - dialogRect.top + inputRect.height / 2;
+		// Start animation (store particles in animation map)
+        setAnimMap(m => ({ ...m, [key]: { x, y, active: true } }));
+        setTimeout(() => setAnimMap(m => ({ ...m, [key]: false })), 700); // delete after animation
+    }
 	
 	// Compute dialog position relative to the map container
 	const screenX = node.x + (pan?.x || 0);
@@ -133,7 +151,11 @@ export function NodeDialog({ node, containerRef, pan, toggles = {}, onToggle, on
 	const isComplete = completedCount > 0 && completedCount === totalCount;
 
 	return (
-		<div className="absolute z-50 bg-white dark:bg-gray-800 border rounded p-4 shadow-md w-64 cursor-default" style={{ left: dialogLeft, top: dialogTop }}>
+		<div
+			ref={dialogRef}
+			className="absolute z-50 bg-white dark:bg-gray-800 border rounded p-4 shadow-md w-64 cursor-default"
+			style={{ left: dialogLeft, top: dialogTop }}
+		>
 			<div className="flex justify-between items-center mb-2">
 				<div className="font-semibold">{node.label}</div>
 				<button onClick={onClose} className="text-sm px-2 py-1 border rounded cursor-pointer">Close</button>
@@ -175,11 +197,13 @@ export function NodeDialog({ node, containerRef, pan, toggles = {}, onToggle, on
 							: [];
 
 					const depsSatisfied = deps.every(index => {
+						// Check nested quests
 						const quest = node.quests[index];
 						return !!toggles?.[quest];
 					});
 
 					const dependentsCompleted = node.quests.some((questText, idx) => {
+						// Check dependents individually
 						const rawDep = node.dependencies?.[idx];
 						const depList = Array.isArray(rawDep)
 							? rawDep
@@ -193,6 +217,15 @@ export function NodeDialog({ node, containerRef, pan, toggles = {}, onToggle, on
 
 					const isUnlocked = depsSatisfied; // Have all dependencies been met?
 
+					// Handle checkbox check
+					function handleChange(e) {
+                        if (!isCompleted) {
+							// Play animation when quest is completed
+                            triggerAnim(i, e.currentTarget);
+                        }
+                        onToggle(opt);
+                    }
+
 					return (
 						<label 
 							key={opt} 
@@ -205,8 +238,8 @@ export function NodeDialog({ node, containerRef, pan, toggles = {}, onToggle, on
 							<input 
 								type="checkbox"
 								checked={isCompleted} 
-                                disabled={disabled}
-								onChange={() => onToggle(opt)} 
+								disabled={disabled}
+								onChange={(e) => handleChange(e)} 
 								className={`${
 									disabled ? 'cursor-not-allowed' : 'cursor-pointer'
 								}`}
@@ -220,6 +253,22 @@ export function NodeDialog({ node, containerRef, pan, toggles = {}, onToggle, on
 							>
 								{opt}
 							</span>
+							{/* Render animation */}
+                            {animMap[i]?.active && (
+                                <div
+                                    aria-hidden="true"
+                                    className="absolute pointer-events-none"
+                                    style={{
+                                        left: animMap[i].x,
+                                        top: animMap[i].y,
+                                        transform: "translate(-50%,-50%)",
+                                        width: 160,
+                                        height: 160,
+                                    }}
+                                >
+                                    <QuestCheckAnimation active seed={i + node.label.length} />
+                                </div>
+                            )}
 						</label>
 					);
 				})}
