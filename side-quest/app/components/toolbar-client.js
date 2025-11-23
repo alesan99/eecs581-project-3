@@ -11,8 +11,9 @@
 
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { Map, Compass, Trophy, User, LogOut } from "lucide-react";
+import { Map, Compass, Trophy, User, LogOut, Menu, X } from "lucide-react";
 import NotificationButton from "./NotificationButton";
 
 /*
@@ -27,57 +28,61 @@ import NotificationButton from "./NotificationButton";
 		JSX element for toolbar
 */
 export default function ToolbarClient({ user }) {
+	const [mobileOpen, setMobileOpen] = useState(false); // mobile if window is too small
+	const panelRef = useRef(null);
+
+	// Turn it into a hamburger menu if the window is too small (for phones)
+	useEffect(() => {
+		function onDocClick(e) {
+			if (mobileOpen && panelRef.current && !panelRef.current.contains(e.target)) {
+				setMobileOpen(false);
+			}
+		}
+		function onResize() {
+			if (window.innerWidth >= 768) setMobileOpen(false);
+		}
+		// use resize listeners to enable the hamburger on the fly
+		document.addEventListener("click", onDocClick);
+		window.addEventListener("resize", onResize);
+		return () => {
+			document.removeEventListener("click", onDocClick);
+			window.removeEventListener("resize", onResize);
+		};
+	}, [mobileOpen]);
+
 	return (
-		<nav className="sticky top-0 z-50 flex items-center justify-between bg-gradient-to-r from-[#00AEEF] to-[#0096D6] text-white px-8 py-4 shadow-lg">
-			<Link 
-				href="/" 
-				className="flex items-center gap-3 group transition-transform hover:scale-105 active:scale-95"
-			>
+		<nav className="sticky top-0 z-50 flex items-center justify-between bg-gradient-to-r from-[#00AEEF] to-[#0096D6] text-white px-4 md:px-8 py-3 shadow-lg">
+			<Link href="/" className="flex items-center gap-3 group transition-transform hover:scale-105 active:scale-95">
 				<div className="relative">
-					<Map className="w-8 h-8 text-[#FFDA00] drop-shadow-lg group-hover:rotate-[-12deg] transition-transform duration-300" />
-					<div className="absolute inset-0 bg-[#FFDA00] opacity-0 group-hover:opacity-20 blur-md transition-opacity duration-300" />
+					<Map className="w-7 h-7 text-[#FFDA00] drop-shadow-lg group-hover:rotate-[-12deg] transition-transform duration-300" />
 				</div>
-				<span className="text-3xl font-extrabold drop-shadow-[2px_2px_0px_rgba(0,0,0,0.3)] tracking-tight">
-					<span className="text-white group-hover:text-[#FFDA00] transition-colors duration-200">
-						Side
-					</span>
-					<span className="text-[#FFDA00] group-hover:text-white transition-colors duration-200">
-						{" "}Quest
-					</span>
+				<span className="text-2xl font-extrabold tracking-tight">
+					<span className="text-white group-hover:text-[#FFDA00] transition-colors duration-200">Side</span>
+					<span className="text-[#FFDA00] group-hover:text-white transition-colors duration-200"> Quest</span>
 				</span>
 			</Link>
 			
 			{/* Navigation Links - Always visible */}
 			<div className="hidden md:flex gap-6 text-lg font-semibold">
-				<Link 
-					href="/map" 
-					className="group flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 hover:text-[#FFDA00] transition-all duration-200 hover:scale-105"
-				>
-					<Map className="w-5 h-5 group-hover:scale-110 transition-transform" /> Map
-				</Link>
-				<Link 
-					href="/quests" 
-					className="group flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 hover:text-[#FFDA00] transition-all duration-200 hover:scale-105"
-				>
-					<Compass className="w-5 h-5 group-hover:scale-110 transition-transform" /> Quests
-				</Link>
-				<Link 
-					href="/leaderboard" 
-					className="group flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 hover:text-[#FFDA00] transition-all duration-200 hover:scale-105"
-				>
-					<Trophy className="w-5 h-5 group-hover:scale-110 transition-transform" /> Leaderboard
-				</Link>
-				<Link 
-					href="/account" 
-					className="group flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 hover:text-[#FFDA00] transition-all duration-200 hover:scale-105"
-				>
-					<User className="w-5 h-5 group-hover:scale-110 transition-transform" /> Account
-				</Link>
+				<Link href="/map" className="group flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 hover:text-[#FFDA00] transition-all duration-200"> <Map className="w-5 h-5" /> Map</Link>
+				<Link href="/quests" className="group flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 hover:text-[#FFDA00] transition-all duration-200"> <Compass className="w-5 h-5" /> Quests</Link>
+				<Link href="/leaderboard" className="group flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 hover:text-[#FFDA00] transition-all duration-200"> <Trophy className="w-5 h-5" /> Leaderboard</Link>
+				<Link href="/account" className="group flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 hover:text-[#FFDA00] transition-all duration-200"> <User className="w-5 h-5" /> Account</Link>
 			</div>
 
-			{/* Auth Section */}
+			{/* Right side / auth */}
 			<div className="flex items-center gap-3">
 				{user && <NotificationButton />}
+
+				{/* Mobile menu button */}
+				<button
+					className="md:hidden p-2 rounded-lg bg-white/10 hover:bg-white/20 transition"
+					aria-label="Toggle menu"
+					onClick={() => setMobileOpen(v => !v)}
+				>
+					{mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+				</button>
+
 				{user ? (
 					<>
 						<div className="hidden sm:flex items-center gap-2 text-sm bg-white/10 px-3 py-2 rounded-lg backdrop-blur-sm">
@@ -85,25 +90,46 @@ export default function ToolbarClient({ user }) {
 							<span>{user.name || user.email}</span>
 						</div>
 						<form action="/api/auth/logout" method="post">
-							<button 
-								type="submit" 
-								className="bg-transparent hover:bg-[#00AEEF] text-white p-3 rounded-lg transition-all duration-200 cursor-pointer flex items-center justify-center group"
-								title="Logout"
-							>
+							<button type="submit" className="bg-transparent hover:bg-[#00AEEF] text-white p-3 rounded-lg transition-all duration-200 cursor-pointer flex items-center justify-center group" title="Logout">
 								<LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" />
 							</button>
 						</form>
 					</>
 				) : (
-					// Login button for unauthorized users
-					<Link 
-						href="/login" 
-						className="bg-[#FF7A00] hover:bg-[#FF9500] text-white font-semibold px-5 py-2 rounded-lg transition-all duration-200 hover:scale-105"
-					>
+					<Link href="/login" className="hidden sm:inline-block bg-[#FF7A00] hover:bg-[#FF9500] text-white font-semibold px-5 py-2 rounded-lg transition-all duration-200 hover:scale-105">
 						Login
 					</Link>
 				)}
 			</div>
+
+			{/* Mobile panel */}
+			{mobileOpen && (
+				<div ref={panelRef} className="md:hidden absolute top-full left-0 right-0 bg-white text-[#0b3b4a] shadow-lg py-3 z-50">
+					<div className="flex flex-col px-4 gap-2">
+						<Link href="/map" className="px-3 py-2 rounded-md hover:bg-gray-100">Map</Link>
+						<Link href="/quests" className="px-3 py-2 rounded-md hover:bg-gray-100">Quests</Link>
+						<Link href="/leaderboard" className="px-3 py-2 rounded-md hover:bg-gray-100">Leaderboard</Link>
+						<Link href="/account" className="px-3 py-2 rounded-md hover:bg-gray-100">Account</Link>
+						<div className="border-t mt-2 pt-2">
+							{user ? (
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-3">
+										<User className="w-5 h-5" />
+										<div>
+											<div className="font-medium">{user.name || user.email}</div>
+										</div>
+									</div>
+									<form action="/api/auth/logout" method="post">
+										<button type="submit" className="px-3 py-2 rounded-md bg-[#FF7A00] text-white">Logout</button>
+									</form>
+								</div>
+							) : (
+								<Link href="/login" className="block px-3 py-2 rounded-md bg-[#FF7A00] text-white text-center">Login</Link>
+							)}
+						</div>
+					</div>
+				</div>
+			)}
 		</nav>
 	);
 }
