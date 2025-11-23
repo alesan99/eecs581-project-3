@@ -60,12 +60,25 @@ function MapCanvas() {
 	// Loading state for progress
 	const [loadingProgress, setLoadingProgress] = useState(true);
 
-	// Panning state
+	// Panning
 	const [pan, setPan] = useState({ x: 0, y: 0 });
 	const [isPanning, setIsPanning] = useState(false);
 	const isPanningRef = useRef(false);
 	const lastRef = useRef({ x: 0, y: 0 });
 	const movedRef = useRef(false);
+	// Panning
+	const initialPanRef = useRef(null);
+	const PAN_STEP = 160;
+	function panBy(dx, dy) { // Pan by a set distance
+		setPan(p => ({ x: p.x + dx, y: p.y + dy }));
+	}
+	// reset to initial centered position
+	function resetPosition() {
+		if (initialPanRef.current) {
+			setPan({ ...initialPanRef.current });
+			return;
+		}
+	}
 
 	// Center initial view on first node
 	useEffect(() => {
@@ -76,6 +89,11 @@ function MapCanvas() {
 				x: c.clientWidth / 2 - start.x,
 				y: c.clientHeight / 2 - start.y,
 			});
+			// store initial pan for reset button
+			initialPanRef.current = {
+				x: c.clientWidth / 2 - start.x,
+				y: c.clientHeight / 2 - start.y,
+			};
 		}
 	}, [nodes]);
 
@@ -398,6 +416,17 @@ function MapCanvas() {
 						/>
 					);
 				})}
+			</div>
+
+			{/* Pan controls (overlay) */}
+			<div className="absolute left-4 top-4 z-50 flex flex-col items-center gap-2">
+				{/* Reset Button */}
+				<button
+					onPointerDown={e => e.stopPropagation()}
+					onClick={() => resetPosition()}
+					title="Reset position"
+					className="w-10 h-10 bg-[#FF7A00] text-white rounded-md shadow flex items-center justify-center hover:brightness-105 transition cursor-pointer"
+				>{"↻"}</button>
 			</div>
 
 			{/* Display dialog for selected node */}
