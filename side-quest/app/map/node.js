@@ -110,7 +110,8 @@ export function Node({ node, onPointerDown, onClick, completedCount = 0, totalCo
 					)}
 				</div>
 			</div>
-			<div className="absolute left-0 top-full mt-8 -translate-x-1/2 transform w-28 text-sm text-center text-gray-700 dark:text-gray-200">
+			{/* Location name */}
+			<div className="absolute left-0 top-full mt-8 -translate-x-1/2 transform w-28 text-sm text-center text-gray-700">
 				{node.label}
 			</div>
 		</div>
