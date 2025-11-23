@@ -3,7 +3,7 @@
 	Description: Renders the client-side toolbar with navigation, user info, and notifications.
 	Programmers: Alejandro Sandoval, Pashia Vang
 	Date: 10/25/2025
-	Revisions: Add notifications - 11/06/2025
+	Revisions: Add notifications - 11/06/2025, Add conditional admin page - 11/23/2025
 	Errors: N/A
 	Input: User object (name, email) from parent component
 	Output: Navigation toolbar with links, login/logout buttons, and notifications
@@ -13,7 +13,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { Map, Compass, Trophy, User, LogOut, Menu, X } from "lucide-react";
+import { Map, Compass, Trophy, User, LogOut, Menu, Brain, X } from "lucide-react";
 import NotificationButton from "./NotificationButton";
 
 /*
@@ -50,6 +50,8 @@ export default function ToolbarClient({ user }) {
 		};
 	}, [mobileOpen]);
 
+	console.log(user);
+
 	return (
 		<nav className="sticky top-0 z-50 flex items-center justify-between bg-gradient-to-r from-[#00AEEF] to-[#0096D6] text-white px-4 md:px-8 py-3 shadow-lg">
 			<Link href="/" className="flex items-center gap-3 group transition-transform hover:scale-105 active:scale-95">
@@ -68,6 +70,10 @@ export default function ToolbarClient({ user }) {
 				<Link href="/quests" className="group flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 hover:text-[#FFDA00] transition-all duration-200"> <Compass className="w-5 h-5" /> Quests</Link>
 				<Link href="/leaderboard" className="group flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 hover:text-[#FFDA00] transition-all duration-200"> <Trophy className="w-5 h-5" /> Leaderboard</Link>
 				<Link href="/account" className="group flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 hover:text-[#FFDA00] transition-all duration-200"> <User className="w-5 h-5" /> Account</Link>
+				{/* Admin tab is only visible if user is admin*/}
+				{user?.is_admin && (
+					<Link href="/admin" className="group flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 hover:text-[#FFDA00] transition-all duration-200"> <Brain className="w-5 h-5" /> Admin </Link>
+				)}
 			</div>
 
 			{/* Right side / auth */}
@@ -110,6 +116,10 @@ export default function ToolbarClient({ user }) {
 						<Link href="/quests" className="px-3 py-2 rounded-md hover:bg-gray-100">Quests</Link>
 						<Link href="/leaderboard" className="px-3 py-2 rounded-md hover:bg-gray-100">Leaderboard</Link>
 						<Link href="/account" className="px-3 py-2 rounded-md hover:bg-gray-100">Account</Link>
+						{/* Admin tab is only visible if user is admin*/}
+						{user?.is_admin && (
+							<Link href="/admin" className="px-3 py-2 rounded-md hover:bg-gray-100 font-medium">Admin</Link>
+						)}
 						<div className="border-t mt-2 pt-2">
 							{user ? (
 								<div className="flex items-center justify-between">

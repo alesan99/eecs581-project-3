@@ -1,0 +1,301 @@
+/*
+	Name: admin/panel.js
+	Description: A component for editing locations and quests.
+	Programmers: Alejandro Sandoval
+	Date: 11/23/2025
+	Revisions: N/A
+	Errors: N/A
+	Input: Lists of quests and locations.
+	Output: An editable interface for editing the lists of quests and locations.
+*/
+
+"use client";
+
+import { useState, useMemo } from "react";
+
+export default function AdminPanel({ initialLocations = [], initialQuests = [] }) {
+	// Lets you edit quests as an admin
+	const [locations, setLocations] = useState(initialLocations);
+	const [quests, setQuests] = useState(initialQuests);
+	const [locSaving, setLocSaving] = useState(false);
+	const [questSaving, setQuestSaving] = useState(false);
+
+	// New location/quest forms
+	const [newLoc, setNewLoc] = useState({ name: "", type: "", x_coordinate: 0, y_coordinate: 0 });
+	const [newQuest, setNewQuest] = useState({ text: "", location_id: locations[0]?.location_id ?? null });
+
+	// helper api caller (adjust endpoints if different)
+	async function api(path, method = "GET", body) {
+	const res = await fetch(`/api/admin/${path}`, {
+		method,
+		headers: { "Content-Type": "application/json" },
+		body: body ? JSON.stringify(body) : undefined,
+	});
+	if (!res.ok) {
+		const err = await res.text().catch(() => res.statusText);
+		throw new Error(err || "Error with api");
+	}
+	return res.json().catch(() => null);
+	}
+
+	// Handle location editing //
+	// Add new location
+	async function addLocation() {
+		if (!newLoc.name.trim()) return alert("Name required");
+		setLocSaving(true);
+		try {
+			const created = await api("locations", "POST", newLoc);
+			// backend should return created row with location_id
+			setLocations(s => [...s, created || { ...newLoc }]);
+			setNewLoc({ name: "", type: "", x_coordinate: 0, y_coordinate: 0 });
+			setNewQuest(q => ({ ...q, location_id: created?.location_id ?? q.location_id }));
+		} catch (err) {
+			console.error(err);
+			alert("Could not add location");
+		} finally {
+			setLocSaving(false);
+		}
+	}
+	// Edit location
+	async function updateLocation(id, changes) {
+		setLocSaving(true);
+		try {
+			const updated = await api("locations", "PUT", { location_id: id, ...changes });
+			setLocations(s => s.map(l => (l.location_id === id ? { ...l, ...changes, ...(updated || {}) } : l)));
+		} catch (err) {
+			console.error(err);
+		} finally {
+			setLocSaving(false);
+		}
+	}
+	// Delete location
+	async function deleteLocation(id) {
+		if (!confirm("Delete this location?")) return;
+		setLocSaving(true);
+		try {
+			await api(`locations`, "DELETE", { location_id: id });
+			setLocations(s => s.filter(l => l.location_id !== id)); // remove location
+			setQuests(qs => qs.filter(q => q.location_id !== id)); // remove quets
+		} catch (err) {
+			console.error(err);
+		} finally {
+			setLocSaving(false);
+		}
+	}
+
+	// Handle quest editing //
+	// Add new quest
+	async function addQuest() {
+		if (!newQuest.text.trim()) return alert("Quest text required");
+		if (!newQuest.location_id) return alert("Choose a location");
+		setQuestSaving(true);
+		try {
+			const created = await api("quests", "POST", newQuest);
+			setQuests(s => [...s, created || { ...newQuest }]);
+			setNewQuest({ text: "", location_id: locations[0]?.location_id ?? null });
+		} catch (err) {
+			console.error(err);
+			alert("Could not add quest");
+		} finally {
+			setQuestSaving(false);
+		}
+	}
+	// Edit quest
+	async function updateQuest(id, changes) {
+		setQuestSaving(true);
+		try {
+			const updated = await api("quests", "PUT", { quest_id: id, ...changes });
+			setQuests(s => s.map(q => (q.quest_id === id ? { ...q, ...changes, ...(updated || {}) } : q)));
+		} catch (err) {
+			console.error(err);
+		} finally {
+			setQuestSaving(false);
+		}
+	}
+	// Delete quest
+	async function deleteQuest(id) {
+		if (!confirm("Delete this quest?")) return;
+		setQuestSaving(true);
+		try {
+			await api("quests", "DELETE", { quest_id: id });
+			setQuests(s => s.filter(q => q.quest_id !== id));
+		} catch (err) {
+			console.error(err);
+		} finally {
+			setQuestSaving(false);
+		}
+	}
+
+	// Create dropdowns for selecting location for each quest
+	const locById = useMemo(() => Object.fromEntries(locations.map(l => [l.location_id, l.name])), [locations]);
+	const questsSorted = useMemo(() => {
+		const copy = [...quests];
+		copy.sort((a, b) => {
+			const la = locById[a.location_id] ?? "";
+			const lb = locById[b.location_id] ?? "";
+			if (la < lb) return -1;
+			if (la > lb) return 1;
+			return 0;
+		});
+		return copy;
+	}, [quests, locById]);
+
+	// Return panel
+	return (
+	<div className="max-w-7xl mx-auto p-6 space-y-6 text-[#FF7A00]">
+		<h1 className="text-2xl font-semibold">Admin Panel</h1>
+
+		{/* LOCATIONS */}
+		{/* New location: */}
+		<section className="bg-white rounded shadow p-4">
+		<div className="flex items-center justify-between mb-4">
+			<h2 className="text-lg font-medium">Locations</h2>
+			<div className="flex gap-2 items-center">
+			<input
+				className="px-2 py-1 border rounded w-48"
+				placeholder="Name"
+				value={newLoc.name}
+				onChange={e => setNewLoc(n => ({ ...n, name: e.target.value }))}
+			/>
+			<input
+				className="px-2 py-1 border rounded w-32"
+				placeholder="Type"
+				value={newLoc.type}
+				onChange={e => setNewLoc(n => ({ ...n, type: e.target.value }))}
+			/>
+			<input
+				type="number"
+				className="px-2 py-1 border rounded w-20"
+				value={newLoc.x_coordinate}
+				onChange={e => setNewLoc(n => ({ ...n, x_coordinate: Number(e.target.value) }))}
+			/>
+			<input
+				type="number"
+				className="px-2 py-1 border rounded w-20"
+				value={newLoc.y_coordinate}
+				onChange={e => setNewLoc(n => ({ ...n, y_coordinate: Number(e.target.value) }))}
+			/>
+			<button
+				className="ml-2 bg-[#FF7A00] text-white px-3 py-1 rounded disabled:opacity-60"
+				onClick={addLocation}
+				disabled={locSaving}
+			>
+				Add
+			</button>
+			</div>
+		</div>
+		{/* Existing locations: */}
+		<div className="space-y-2">
+			{locations.map(loc => (
+			<div key={loc.location_id} className="flex items-center gap-2">
+				<input
+				className="px-2 py-1 border rounded w-80"
+				value={loc.name}
+				onChange={e => setLocations(s => s.map(l => (l.location_id === loc.location_id ? { ...l, name: e.target.value } : l)))}
+				onBlur={e => updateLocation(loc.location_id, { name: e.target.value })}
+				/>
+				<input
+				className="px-2 py-1 border rounded w-28"
+				value={loc.type ?? ""}
+				onChange={e => setLocations(s => s.map(l => (l.location_id === loc.location_id ? { ...l, type: e.target.value } : l)))}
+				onBlur={e => updateLocation(loc.location_id, { type: e.target.value })}
+				/>
+				<input
+				type="number"
+				className="px-2 py-1 border rounded w-24"
+				value={loc.x_coordinate ?? 0}
+				onChange={e => setLocations(s => s.map(l => (l.location_id === loc.location_id ? { ...l, x_coordinate: Number(e.target.value) } : l)))}
+				onBlur={e => updateLocation(loc.location_id, { x_coordinate: Number(e.target.value) })}
+				/>
+				<input
+				type="number"
+				className="px-2 py-1 border rounded w-24"
+				value={loc.y_coordinate ?? 0}
+				onChange={e => setLocations(s => s.map(l => (l.location_id === loc.location_id ? { ...l, y_coordinate: Number(e.target.value) } : l)))}
+				onBlur={e => updateLocation(loc.location_id, { y_coordinate: Number(e.target.value) })}
+				/>
+				<button
+				className="ml-2 text-red-600 px-2 py-1 rounded border"
+				onClick={() => deleteLocation(loc.location_id)}
+				disabled={locSaving}
+				title="Delete location"
+				>
+				Delete
+				</button>
+			</div>
+			))}
+		</div>
+		</section>
+
+		{/* QUESTS */}
+		{/* New quest: */}
+		<section className="bg-white rounded shadow p-4">
+		<div className="flex items-center justify-between mb-4">
+			<h2 className="text-lg font-medium">Quests</h2>
+			<div className="flex items-center gap-2">
+			<select
+				className="px-2 py-1 border rounded"
+				value={newQuest.location_id ?? ""}
+				onChange={e => setNewQuest(q => ({ ...q, location_id: Number(e.target.value) }))}
+			>
+				<option value="">Select location</option>
+				{locations.map(l => (
+				<option key={l.location_id} value={l.location_id}>
+					{l.name}
+				</option>
+				))}
+			</select>
+			<input
+				className="px-2 py-1 border rounded w-64"
+				placeholder="Quest text"
+				value={newQuest.text}
+				onChange={e => setNewQuest(q => ({ ...q, text: e.target.value }))}
+			/>
+			<button
+				className="ml-2 bg-[#FF7A00] text-white px-3 py-1 rounded disabled:opacity-60"
+				onClick={addQuest}
+				disabled={questSaving}
+			>
+				Add Quest
+			</button>
+			</div>
+		</div>
+		{/* Existing quests: */}
+		<div className="space-y-2">
+			{questsSorted.map(q => (
+			<div key={q.quest_id} className="flex items-center gap-2">
+				<select
+				className="px-2 py-1 border rounded w-44"
+				value={q.location_id ?? ""}
+				onChange={e => updateQuest(q.quest_id, { location_id: Number(e.target.value) })}
+				>
+				<option value="">Unassigned</option>
+				{locations.map(l => (
+					<option key={l.location_id} value={l.location_id}>
+					{l.name}
+					</option>
+				))}
+				</select>
+
+				<input
+				className="px-2 py-1 border rounded flex-1"
+				value={q.text}
+				onChange={e => setQuests(s => s.map(x => (x.quest_id === q.quest_id ? { ...x, text: e.target.value } : x)))}
+				onBlur={e => updateQuest(q.quest_id, { text: e.target.value })}
+				/>
+
+				<button
+				className="ml-2 text-red-600 px-2 py-1 rounded border"
+				onClick={() => deleteQuest(q.quest_id)}
+				disabled={questSaving}
+				title="Delete quest"
+				>
+				Delete
+				</button>
+			</div>
+			))}
+		</div>
+		</section>
+	</div>
+	);
+}
