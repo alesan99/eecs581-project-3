@@ -69,21 +69,21 @@ export default function Home() {
 					<div className="bg-white rounded-2xl p-6 border-4 border-[#00AEEF] shadow-[6px_6px_0_#FF7A00] hover:shadow-[8px_8px_0_#FF7A00] transform hover:scale-105 transition-all">
 						<Users className="w-10 h-10 text-[#00AEEF] mx-auto mb-2" />
 						<p className="text-2xl font-bold text-[#FF7A00]">Join the Squad</p>
-						<p className="text-sm text-gray-600">Compete with friends</p>
+						<p className="text-sm text-gray-600">Compete with friends in the leaderboard</p>
 					</div>
 
 					{/* Card 2 */}
 					<div className="bg-white rounded-2xl p-6 border-4 border-[#FF7A00] shadow-[6px_6px_0_#00AEEF] hover:shadow-[8px_8px_0_#00AEEF] transform hover:scale-105 transition-all">
 						<Trophy className="w-10 h-10 text-[#FF7A00] mx-auto mb-2" />
 						<p className="text-2xl font-bold text-[#00AEEF]">Earn Bragging Rights</p>
-						<p className="text-sm text-gray-600">Placeholder</p>
+						<p className="text-sm text-gray-600">See your number of completed quests</p>
 					</div>
 
 					{/* Card 3 */}
 					<div className="bg-white rounded-2xl p-6 border-4 border-[#FFDA00] shadow-[6px_6px_0_#FF7A00] hover:shadow-[8px_8px_0_#FF7A00] transform hover:scale-105 transition-all">
 						<Sparkles className="w-10 h-10 text-[#FF7A00] mx-auto mb-2" />
 						<p className="text-2xl font-bold text-[#00AEEF]">Epic Quests</p>
-						<p className="text-sm text-gray-600">Placeholder</p>
+						<p className="text-sm text-gray-600">A wide variety for each location</p>
 					</div>
 				</div>
 				
