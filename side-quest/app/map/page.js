@@ -3,7 +3,7 @@
 	Description: Map viewing page. Main map interface for tracking quest progress.
 	Programmers: Alejandro Sandoval, Pashia Vang
 	Date: 10/25/2025
-	Revisions: Add notifications and progress bars - 11/06/2025
+	Revisions: Add notifications and progress bars - 11/06/2025, Add navigation buttons and animations - 11/22/2025
 	Errors: N/A
 	Input: Map data, user progress from API, user interactions
 	Output: Interactive map UI with nodes, Dialogs, progress indicators, and notifications
