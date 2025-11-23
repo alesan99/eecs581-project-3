@@ -50,8 +50,6 @@ export default function ToolbarClient({ user }) {
 		};
 	}, [mobileOpen]);
 
-	console.log(user);
-
 	return (
 		<nav className="sticky top-0 z-50 flex items-center justify-between bg-gradient-to-r from-[#00AEEF] to-[#0096D6] text-white px-4 md:px-8 py-3 shadow-lg">
 			<Link href="/" className="flex items-center gap-3 group transition-transform hover:scale-105 active:scale-95">

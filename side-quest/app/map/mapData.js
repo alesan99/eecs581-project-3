@@ -9,38 +9,42 @@
 	Output: Map object containing campus nodes, quests, links, and background info
 */
 
+import { useEffect, useState } from "react";
+
+
 // Primary map configuration object
-export const mapData = {
+const SCALE = 1.5;
+const initMapData = {
 	// Canvas dimensions for the rendered map (virtual coordinates)
-	width: 2000,
-	height: 3000,
+	width: 1669*SCALE,
+	height: 1535*SCALE,
 	// Node definitions: each represents a campus landmark or quest point
 	nodes: [
 		{
-			id: "a",
-			x: 645,
-			y: 539,
+			id: "lee",
+			x: 645*SCALE,
+			y: 539*SCALE,
 			label: "LEEP2",
 			quests: [
 				"Visit the LEEP Atrium.",
 				"Visit the Nest.",
 				"Find the balcony.",
-				"See the boot guy,",
+				"See the boot guy.",
 			]
 		},
 		{
-			id: "b",
-			x: 812,
-			y: 487,
+			id: "chi",
+			x: 812*SCALE,
+			y: 487*SCALE,
 			label: "Chi Omega Fountain",
 			quests: [
 				"Go for a swim in the fountain.",
 			]
 		},
 		{
-			id: "c",
-			x: 879,
-			y: 731,
+			id: "sum",
+			x: 879*SCALE,
+			y: 731*SCALE,
 			label: "Summerfield Hall",
 			quests: [
 				"Use the sketchy small elevator.",
@@ -48,150 +52,95 @@ export const mapData = {
 				"Sit on the painted bench.",
 			]
 		},
-		{
-			id: "d",
-			x: 1221,
-			y: 459,
-			label: "KU Memorial Union",
-			quests: [
-				"Take a selfie infront of the jayhawk statues.",
-				"Play a board game on the bottom floor.",
-				"Get food from the market.",
-				"Find the ATMs.",
-				"Attend a career fair.",
-				"Get Chick-Fil-A",
-			]
-		},
-		{
-			id: "e",
-			x: 991,
-			y: 592,
-			label: "Wescoe Hall",
-			quests: [
-				"Get free food in front of Wescoe.",
-				"Get free food in front of Wescoe twice.",
-				"Get free food in front of Wescoe three times.",
-				"Find the vending machines in the underground.",
-			],
-			dependencies: {
-				1: [0],
-				2: [1],
-				3: [2],
-			}
-		},
-		{
-			id: "f",
-			x: 1032,
-			y: 421,
-			label: "Campanile",
-			quests: [
-				"Walk under the bell tower.",
-			]
-		},
-		{
-			id: "g",
-			x: 1202,
-			y: 531,
-			label: "Natural History Museum",
-			quests: [
-				"See Comanche",
-			]
-		},
-		{
-			id: "h",
-			x: 776,
-			y: 673,
-			label: "Murphy Hall",
-			quests: [
-				"Visit the courtyard",
-				"Find the library",
-			]
-		},
-		{
-			id: "i",
-			x: 883,
-			y: 612,
-			label: "Anshutz Library",
-			quests: [
-				"Find The Stacks.",
-				"Collect a tiny duck.",
-				"Visit the secret bottom floor.",
-				"Take the sketchy back stairs"
-			]
-		},
-		{
-			id: "j",
-			x: 903,
-			y: 574,
-			label: "Budig Hall",
-			quests: [
-				"Find the balcony",
-			]
-		},
-		{
-			id: "k",
-			x: 710,
-			y: 593,
-			label: "Eaton Hall",
-			quests: [
-				"Try to find a working printer",
-			]
-		},
-		{
-			id: "l",
-			x: 713,
-			y: 820,
-			label: "Allen Fieldhouse",
-			quests: [
-				"Go to a basketball game.",
-				"Camp for a game.",
-			]
-		},
-		{
-			id: "m",
-			x: 765,
-			y: 611,
-			label: "Slawson Hall",
-			quests: [
-				"Walk under the dinosaur fossil.",
-				"Go up all the stairs without a break.",
-				"Open the front doors in the correct direction.",
-			]
-		},
-		{
-			id: "n",
-			x: 935,
-			y: 402,
-			label: "Potter Lake",
-			quests: [
-				"Jump in the lake.",
-				"Sled down Potter hill when it snows.",
-			]
-		},
-		{
-			id: "o",
-			x: 911,
-			y: 516,
-			label: "Snow Hall",
-			quests: [
-				"Go to the math help room",
-			]
-		},
 	],
 
 	// link pairs by id
 	links: [
-		["a", "b"],
-		["a", "c"],
-		["b", "d"],
-		["c", "d"],
+		// ["lee", "chi"],
+		// ["lee", "eat"],
 	],
 
 	// Background image
 	background: {
 		src: "/map.png",
-		width: 1669,
-		height: 1535,
+		width: 1669*SCALE,
+		height: 1535*SCALE,
 		opacity: 0.4,
 	},
+}
+
+
+// Create map data by fetching locations and quests from backend
+export function useMapData() {
+	const [mapData, setMapData] = useState(initMapData);
+	useEffect(() => {
+		let mounted = true;
+
+		async function load() {
+			try {
+				// Fetch quests and locations from backend
+				const res = await fetch("/api/map");
+				if (!res.ok) {
+					console.error("mapData fetch failed", res.status);
+					return;
+				}
+				const payload = await res.json();
+				
+				if (!Array.isArray(payload.locations) || !Array.isArray(payload.quests)) {
+					// No locations or quests
+					return;
+				}
+				const locations = payload.locations;
+				const quests = payload.quests;
+
+				// construct a node for each location
+				const nodes = locations.map((location, i) => {
+					// Get all quests for this location
+					const locationQuests = quests.filter(q => q.location_id === location.location_id);
+					console.log(quests, location);
+					const questTexts = locationQuests.map(q => q.text ?? "");
+					// Build dependencies
+					const dependencies = {};
+					locationQuests.forEach((q, i) => {
+						if (q.dependency !== undefined && q.dependency !== null) {
+							const depIndex = locationQuests.findIndex(dq => dq.quest_id === q.dependency);
+							if (depIndex !== -1) {
+								dependencies[i] = [depIndex];
+							}
+						}
+					});
+
+					return {
+						id: location.name.slice(0,3).toLowerCase(),
+						x: Number(location.x_coordinate ?? 0)*SCALE,
+						y: Number(location.y_coordinate ?? 0)*SCALE,
+						label: location.name ?? `Location ${loc.location_id}`,
+						quests: questTexts,
+						dependencies,
+					};
+				});
+
+				// Preserve frontend background/size and fallback links
+				const result = {
+					width: initMapData.width,
+					height: initMapData.height,
+					background: initMapData.background,
+					links: initMapData.links,
+					nodes,
+				};
+				console.log(result)
+
+				if (mounted) setMapData(result);
+			} catch (err) {
+				// on any error remain using initMapData
+				console.error("Failed to load map info", err);
+			}
+		}
+
+		load();
+		return () => { mounted = false; };
+	}, []);
+
+	// Remove constructed map data
+	return mapData;
 }

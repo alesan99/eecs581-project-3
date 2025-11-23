@@ -12,8 +12,8 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState, useEffect } from "react";
-import { mapData } from "./mapData";
+import { useRef, useState, useEffect, useMemo } from "react";
+import { useMapData } from "./mapData";
 import { Node, NodeDialog } from "./node";
 import { useNotifications } from "../contexts/NotificationContext";
 
@@ -45,17 +45,18 @@ function MapCanvas() {
 	const { addNotification } = useNotifications();
 
 	// Static map data
-	const [nodes] = useState(mapData.nodes);
+	const mapData = useMapData();
+	const nodes = useMemo(
+		() => (
+			Array.isArray(mapData.nodes) ? mapData.nodes : []
+		)
+	, [mapData.nodes]);
 
 	// Currently selected node (for dialog display)
 	const [selectedId, setSelectedId] = useState(null);
 
 	// Track per-node quest completion states
-	const [nodeToggles, setNodeToggles] = useState(() =>
-		Object.fromEntries(
-			nodes.map(n => [n.id, Object.fromEntries(n.quests.map(opt => [opt, false]))])
-		)
-	);
+	const [nodeToggles, setNodeToggles] = useState({});
 
 	// Loading state for progress
 	const [loadingProgress, setLoadingProgress] = useState(true);
@@ -97,8 +98,30 @@ function MapCanvas() {
 		}
 	}, [nodes]);
 
-	// Load progress from database on mount
+	// Update node toggles when nodes change
 	useEffect(() => {
+		if (!nodes.length) return;
+		setNodeToggles(prev => {
+			const next = { ...prev };
+			// add or update entries for current nodes
+			for (const n of nodes) {
+				const questsForNode = Array.isArray(n.quests) ? n.quests : [];
+				if (!next[n.id]) {
+					next[n.id] = Object.fromEntries(questsForNode.map(q => [q, false]));
+				} else {
+					// ensure all quests exist
+					for (const q of questsForNode) {
+						if (!(q in next[n.id])) next[n.id][q] = false;
+					}
+				}
+			}
+			return next;
+		});
+	}, [nodes]);
+
+	// Load progress from database on mount and when map data loads
+	useEffect(() => {
+		if (!nodes.length) return; // Wait for map data
 		async function loadProgress() {
 			try {
 				const response = await fetch("/api/progress");
@@ -114,32 +137,28 @@ function MapCanvas() {
 				const progress = data.progress || {};
 
 				// Map database progress to node toggles
-				const newToggles = Object.fromEntries(
-					nodes.map(n => [
-						n.id,
-						Object.fromEntries(
-							n.quests.map(questText => {
-								const locationName = n.label;
-								const locationProgress = progress[locationName] || {};
-								const questProgress = locationProgress[questText];
-								return [questText, questProgress?.completed || false];
-							})
-						)
-					])
-				);
-
-				setNodeToggles(newToggles);
+				setNodeToggles(prev => {
+					const updated = { ...prev };
+					for (const n of nodes) {
+						updated[n.id] = updated[n.id] || {};
+						for (const questText of (n.quests || [])) {
+							const locationName = n.label;
+							const locationProgress = progress[locationName] || {};
+							const questProgress = locationProgress[questText];
+							updated[n.id][questText] = !!(questProgress && questProgress.completed);
+						}
+					}
+					return updated;
+				});
 			} catch (error) {
 				console.error("Error loading progress:", error);
-				// Continue with default state if loading fails
 			} finally {
 				setLoadingProgress(false);
 			}
 		}
 
 		loadProgress();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []); // Only run on mount
+	}, [nodes]); // re-run when nodes arrive or change
 
 	/* ====== Pointer Event Handlers (for map dragging/panning) ====== */
 
