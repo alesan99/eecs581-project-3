@@ -127,12 +127,15 @@ function MapCanvas() {
 
 	function onPointerDown(e) {
 		if (e.button !== 0) return; // left mouse only
-		if (e.target !== containerRef.current) return;
+		const interactive = e.target.closest?.("button, a, input, label, [role='button']"); // dont pan with controls
+		if (interactive) return;
 		isPanningRef.current = true;
 		setIsPanning(true);
 		movedRef.current = false;
 		lastRef.current = { x: e.clientX, y: e.clientY };
-		containerRef.current.setPointerCapture(e.pointerId);
+		try { // Improve dragging on mobile
+			containerRef.current?.setPointerCapture(e.pointerId);
+		} catch {}
 	}
 
 	function onPointerMove(e) {
@@ -319,6 +322,7 @@ function MapCanvas() {
 			className={`relative w-full h-full ${
 				isPanning ? "cursor-grabbing" : "cursor-grab"
 			} bg-gray-50 overflow-hidden border rounded border border-gray-400`}
+			style={{ touchAction: "none" }}
 			onPointerDown={onPointerDown}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
