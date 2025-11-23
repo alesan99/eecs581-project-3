@@ -425,8 +425,36 @@ function MapCanvas() {
 					onPointerDown={e => e.stopPropagation()}
 					onClick={() => resetPosition()}
 					title="Reset position"
-					className="w-10 h-10 bg-[#FF7A00] text-white rounded-md shadow flex items-center justify-center hover:brightness-105 transition cursor-pointer"
+					className="w-10 h-10 bg-[#007AFF] text-white rounded-md shadow flex items-center justify-center hover:brightness-105 transition cursor-pointer"
 				>{"↻"}</button>
+				{/* Up Button */}
+				<button
+					onPointerDown={e => e.stopPropagation()}
+					onClick={() => panBy(0, PAN_STEP)}
+					title="Pan Up"
+					className="w-10 h-10 bg-[#FF7A00] text-white rounded-md shadow flex items-center justify-center hover:brightness-105 transition cursor-pointer"
+				>{"↑"}</button>
+				{/* Down Button */}
+				<button
+					onPointerDown={e => e.stopPropagation()}
+					onClick={() => panBy(0, -PAN_STEP)}
+					title="Pan Down"
+					className="w-10 h-10 bg-[#FF7A00] text-white rounded-md shadow flex items-center justify-center hover:brightness-105 transition cursor-pointer"
+				>{"↓"}</button>
+				{/* Left Button */}
+				<button
+					onPointerDown={e => e.stopPropagation()}
+					onClick={() => panBy(PAN_STEP, 0)}
+					title="Pan Left"
+					className="w-10 h-10 bg-[#FF7A00] text-white rounded-md shadow flex items-center justify-center hover:brightness-105 transition cursor-pointer"
+				>{"←"}</button>
+				{/* Right Button */}
+				<button
+					onPointerDown={e => e.stopPropagation()}
+					onClick={() => panBy(-PAN_STEP, 0)}
+					title="Pan Right"
+					className="w-10 h-10 bg-[#FF7A00] text-white rounded-md shadow flex items-center justify-center hover:brightness-105 transition cursor-pointer"
+				>{"→"}</button>
 			</div>
 
 			{/* Display dialog for selected node */}
