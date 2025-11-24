@@ -1,3 +1,14 @@
+/*
+	Name: hash-passwords.js
+	Description: Demonstrate and debug process for uploading hashed passwords into DB for 
+  authentication while minimzing any possible vulnerabilities
+	
+  Programmers: Pashia Vang, Liam Aga, Aiden Barnard
+	Date: 10/26/2025
+	Revisions: Built upon Liam's comments 11/23/2025
+	Errors: N/A
+*/
+
 const bcrypt = require('bcryptjs');
 
 // Sample users with plaintext passwords

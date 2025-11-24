@@ -14,7 +14,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Map, Compass, Backpack } from "lucide-react";
+import { Map, Compass } from "lucide-react";
 
 export default function LoginPage() {
 	// Local state for form fields and error handling

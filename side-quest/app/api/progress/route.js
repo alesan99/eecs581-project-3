@@ -3,7 +3,7 @@
 	Description: Gets and saves user quest progress.
 	Programmers: Pashia Vang
 	Date: 11/06/2025
-	Revisions: N/A
+	Revisions: Comment engineering - Aiden 11/23/2025
 	Errors: N/A
 	Input:  User authentication cookie and quest progress data  
 	Output:  Updated or retrieved quest progress information
@@ -14,8 +14,14 @@ import { createAdminClient } from "../../../lib/supabase/admin";
 
 // Helper function to get user from request
 function getUserFromRequest(req) {
+	// Read the raw cookie header (if present) and find the `sid` cookie.
+	// The code expects a session token stored as `sid=<token>`.
 	const cookie = req.headers.get("cookie") || "";
 	const match = cookie.split(";").map(s => s.trim()).find(s => s.startsWith("sid="));
+
+	// Extract the token value and verify it. `verifyToken` returns the
+	// decoded user object on success or null/throws on failure depending
+	// on implementation in `lib/auth`.
 	const token = match?.split("=")[1];
 	return token ? verifyToken(token) : null;
 }
@@ -60,21 +66,30 @@ export async function GET(req) {
 		);
 	}
 
-	// Transform the data to a simpler format: location_name -> quest_text -> completed
+	// Supabase returns joined relationships in nested structures. Convert
+	// the DB representation into a simpler, deterministic map for the
+	// client UI: { [locationName]: { [questText]: { completed, completed_at, quest_id }}}.
 	const progressMap = {};
 	progress?.forEach(p => {
-		// Handle nested structure - quests might be an array or object
+		// Depending on how the relationship was returned, `p.quests` may be
+		// an array (when using `.select()` with relationships) or a single
+		// object. Prefer the first element when an array is present.
 		const quest = Array.isArray(p.quests) ? p.quests[0] : p.quests;
 		if (!quest) return;
-		
+
+		// Same for nested `locations` relationship.
 		const location = Array.isArray(quest.locations) ? quest.locations[0] : quest.locations;
 		if (!location) return;
-		
+
 		const locationName = location.name;
 		const questText = quest.text;
+
 		if (!progressMap[locationName]) {
 			progressMap[locationName] = {};
 		}
+
+		// Store only the fields the client needs. Using `quest_id` lets the
+		// client refer back to the specific quest when needed.
 		progressMap[locationName][questText] = {
 			completed: p.completed,
 			completed_at: p.completed_at,
