@@ -27,7 +27,7 @@ export function NotificationProvider({ children }) {
 			message: notification.message,
 			type: notification.type || "info", // 'success', 'info', 'warning', 'error'
 			timestamp: new Date(),
-			lifetime: (notification.lifetime || 5)*1000, // How long the notification lasts in seconds.
+			lifetime: (notification.lifetime || 15)*1000, // How long the notification lasts in seconds.
 		};
 
 		setNotifications((prev) => [newNotification, ...prev]);
