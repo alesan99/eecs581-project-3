@@ -16,28 +16,37 @@ import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 
 export default function WelcomeModal() {
+	// State to track whether the modal should be displayed
 	const [shouldShow, setShouldShow] = useState(false);
+	// Loading state while fetching welcome status
 	const [loading, setLoading] = useState(true);
+	// State to prevent multiple dismiss calls
 	const [dismissing, setDismissing] = useState(false);
+		// Get the current pathname to trigger re-check when route changes
 	const pathname = usePathname();
 
+	// Effect: check welcome status whenever the pathname changes
 	useEffect(() => {
 		let mounted = true;
 		setLoading(true);
 
 		async function checkWelcomeStatus() {
 			try {
+				// GET request to server to check if welcome modal should be shown
 				const res = await fetch("/api/welcome", { credentials: "include" });
 				if (!mounted) return;
 
 				if (!res.ok) {
+					// If response is not ok, hide modal
 					setShouldShow(false);
 					return;
 				}
 
 				const data = await res.json();
+				// Show modal only if data.show is true
 				setShouldShow(Boolean(data?.show));
 			} catch (error) {
+				// On network or fetch errors, do not show modal
 				if (mounted) setShouldShow(false);
 			} finally {
 				if (mounted) setLoading(false);
@@ -46,6 +55,7 @@ export default function WelcomeModal() {
 
 		checkWelcomeStatus();
 
+		// Cleanup function to prevent state updates after unmount
 		return () => {
 			mounted = false;
 		};
@@ -57,6 +67,7 @@ export default function WelcomeModal() {
 		setShouldShow(false);
 
 		try {
+			// Notify server that modal has been seen
 			await fetch("/api/welcome", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -69,11 +80,12 @@ export default function WelcomeModal() {
 			setDismissing(false);
 		}
 	}, [dismissing]);
-
+	// If still loading or modal shouldn't be shown, render nothing
 	if (loading || !shouldShow) {
 		return null;
 	}
 
+	// Render modal overlay
 	return (
 		<div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
 			<div className="relative w-full max-w-lg bg-white rounded-3xl border-4 border-[#FF7A00] shadow-[14px_14px_0_#00AEEF] p-8 text-center">
