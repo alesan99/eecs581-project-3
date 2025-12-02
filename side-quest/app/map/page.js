@@ -31,6 +31,18 @@ export default function MapPage() {
 	);
 }
 
+function LoadingOverlay() {
+	// Loading overlay that displays on the map only.
+    return (
+        <div className="absolute inset-0 z-60 flex items-center justify-center bg-white/80 dark:bg-black/60">
+            <div role="status" className="flex flex-col items-center gap-3">
+                <div className="w-14 h-14 rounded-full border-4 border-t-4 border-gray-200 border-t-[#FF7A00] animate-spin" />
+                <span className="text-sm text-gray-700 dark:text-gray-300">{"Loading map..."}</span>
+            </div>
+        </div>
+    );
+}
+
 /*
 	Component: MapCanvas
 	Description:
@@ -353,6 +365,20 @@ function MapCanvas() {
 
 	/* ====== Render ====== */
 
+	// Show loading overlay if not all nodes are done loading
+	const [isLoading, setIsLoading] = useState(() => (!nodes.length || nodes.length < 5));
+	useEffect(() => {
+		// Check if not loading
+		if (!(!nodes.length || nodes.length < 5)) {
+			setIsLoading(false);
+			return;
+		}
+		// Detect timeout, just display map as it is if it isn't done loading after 3 seconds.
+		setIsLoading(true);
+		const t = setTimeout(() => setIsLoading(false), 3000);
+		return () => clearTimeout(t);
+	}, [nodes.length]);
+
 	return (
 		<div
 			ref={containerRef}
@@ -486,6 +512,11 @@ function MapCanvas() {
 					onToggle={opt => toggleOption(selectedId, opt)}
 					onClose={closeDialog}
 				/>
+			)}
+
+			{/* Show loading overlay */}
+			{isLoading && (
+				<LoadingOverlay />
 			)}
 		</div>
 	);
