@@ -236,7 +236,7 @@ export default function AdminPanel({ initialLocations = [], initialQuests = [] }
 			<select
 				className="px-2 py-1 border rounded"
 				value={newQuest.location_id ?? ""}
-				onChange={e => setNewQuest(q => ({ ...q, location_id: Number(e.target.value) }))}
+				onChange={e => setNewQuest(q => ({ ...q, location_id: e.target.value }))}
 			>
 				<option value="">Select location</option>
 				{locations.map(l => (
@@ -267,7 +267,7 @@ export default function AdminPanel({ initialLocations = [], initialQuests = [] }
 				<select
 				className="px-2 py-1 border rounded w-44"
 				value={q.location_id ?? ""}
-				onChange={e => updateQuest(q.quest_id, { location_id: Number(e.target.value) })}
+				onChange={e => updateQuest(q.quest_id, { location_id: e.target.value })}
 				>
 				<option value="">Unassigned</option>
 				{locations.map(l => (
