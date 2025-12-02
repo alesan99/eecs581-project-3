@@ -17,7 +17,7 @@ import AdminPanel from "./panel";
 
 export default async function AdminPage() {
 	// server-side auth client
-	const cookieStore = cookies();
+	const cookieStore = await cookies();
 	const token = cookieStore.get("sid")?.value;
 	const decoded = token ? verifyToken(token) : null;
 

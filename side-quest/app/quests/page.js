@@ -28,7 +28,8 @@ export default async function QuestsPage() {
 	requireAuthOrRedirect();
 
 	// read token from cookie and verify
-	const token = await cookies().get("sid")?.value;
+	const cookieStore = await cookies();
+	const token = cookieStore.get("sid")?.value;
 	const user = token ? verifyToken(token) : null;
 
 	// If the user isn't logged in or the token fails verification,
